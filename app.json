@@ -17,15 +17,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#CAECE7"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "backgroundColor": "#CAECE7",
-      "themeColor": "#A23FB3"
+      "themeColor": "#CAECE7",
+      "config": {
+        "pwa": {
+          "icon": "./assets/icon.png"
+        }
+      }
     }
   }
 }

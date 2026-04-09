@@ -54,7 +54,7 @@ const HomeTabs = () => {
           position: "absolute",
           borderTopWidth: 0,
           elevation: 0,
-          marginHorizontal: 20,
+          marginHorizontal: 30,
           borderRadius: 25,
           marginBottom: 10,
           backgroundColor: colors.backgroundLight,

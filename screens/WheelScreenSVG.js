@@ -8,6 +8,7 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
+import { ArrowBigDown } from "lucide-react-native";
 import { colors, wheelColors } from "./colors";
 import WheelSvg from "../components/WheelSvg";
 
@@ -69,34 +70,25 @@ export default function WheelScreen() {
     "Loriana",
   ];
 
-  const guestsOnWheel = guests.map((name, index) => {
-    const angle = 360 / guests.length;
-
-    return (
-      <View
-        key={index}
-        style={[
-          styles.segment,
-          { transform: [{ rotate: `${index * angle}deg` }] },
-        ]}
-      >
-        <Text style={styles.segmentText}>{name}</Text>
-      </View>
-    );
-  });
-
   return (
     <View style={styles.container}>
-      <View style={styles.pointer} />
+      {/* <View style={styles.pointer} /> */}
+
+      <ArrowBigDown
+        style={{ position: "absolute", top: "14%", zIndex: 1 }}
+        color={colors.primary}
+        size={30}
+      />
       <Animated.View
         style={[styles.wheelContainer, { transform: [{ rotate: spin }] }]}
       >
         <WheelSvg guests={guests} size={300} />
       </Animated.View>
+
       <Pressable style={styles.button} onPress={() => spinWheel()}>
         <Text>Tourner la roue</Text>
       </Pressable>
-      {winner && <Text> Bravo {winner} ! 🎉</Text>}
+      {winner && <Text style={styles.winnerText}> Bravo {winner} ! 🎉</Text>}
     </View>
   );
 }
@@ -107,7 +99,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingBottom: 30,
+    paddingBottom: 15,
+    backgroundColor: colors.primaryLight,
   },
   wheelContainer: {
     height: 300,
@@ -125,21 +118,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  segment: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 15,
-  },
-  segmentText: {
-    fontWeight: "bold",
-    color: "white",
-    width: 100,
-    textAlign: "right",
-    transform: [{ rotate: "90deg" }],
-  },
   pointer: {
     width: 0,
     height: 0,
@@ -155,12 +133,13 @@ const styles = StyleSheet.create({
     top: "7%",
     zIndex: 1,
   },
-  divider: {
+  winnerText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: colors.primary,
+    textAlign: "center",
     position: "absolute",
-    top: 0,
-    left: "50%",
-    width: 2,
-    height: "50%",
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    top: "60%",
+    zIndex: 2,
   },
 });

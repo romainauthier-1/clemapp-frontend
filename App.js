@@ -10,7 +10,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
 
-import { PartyPopper, Gift, SquareArrowRightExit } from "lucide-react-native";
+import {
+  PartyPopper,
+  Gift,
+  SquareArrowRightExit,
+  LoaderPinwheel,
+} from "lucide-react-native";
 import { colors } from "./screens/colors";
 
 import user from "./reducers/user";
@@ -33,6 +38,8 @@ import LoginScreen from "./screens/LoginScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SurprisesScreen from "./screens/SurprisesScreen";
 import LogOutScreen from "./screens/LogOutScreen";
+import WheelScreen from "./screens/WheelScreen";
+import WheelScreenSVG from "./screens/WheelScreenSVG";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,7 +51,6 @@ const HomeTabs = () => {
         headerShown: false,
         tabBarStyle: {
           height: 60,
-          paddingBottom: 10,
           position: "absolute",
           borderTopWidth: 0,
           elevation: 0,
@@ -52,6 +58,7 @@ const HomeTabs = () => {
           borderRadius: 25,
           marginBottom: 10,
           backgroundColor: colors.backgroundLight,
+          padding: 10,
         },
       }}
     >
@@ -94,6 +101,25 @@ const HomeTabs = () => {
         }}
       />
       <Tab.Screen
+        name="Roue"
+        component={WheelScreenSVG}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <LoaderPinwheel
+              size={focused ? 30 : 20}
+              color={focused ? colors.primary : colors.secondary}
+            />
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.secondary,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+            marginBottom: 5,
+          },
+        }}
+      />
+      <Tab.Screen
         name="Déconnexion"
         component={LogOutScreen}
         options={{
@@ -121,9 +147,9 @@ const AppNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isConnected ? (
-        <Stack.Screen name="Home" component={HomeTabs} />
+        <Stack.Screen name="ClemApp | Bienvenue" component={HomeTabs} />
       ) : (
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="ClemApp | Connexion" component={LoginScreen} />
       )}
     </Stack.Navigator>
   );

@@ -11,3 +11,14 @@ export const colors = {
   backgroundLight: "#CAECE7",
   destructive: "#ca0d0d",
 };
+
+export const wheelColors = [
+  "#FFADAD", // Rouge pastel
+  "#FFD6A5", // Orange pastel
+  "#FDFFB6", // Jaune pastel
+  "#CAFFBF", // Vert pastel
+  "#9BF6FF", // Bleu pastel
+  "#A0C4FF", // Bleu plus foncé
+  "#BDB2FF", // Violet
+  "#FFC6FF", // Rose
+];

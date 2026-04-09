@@ -1,0 +1,204 @@
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../reducers/user";
+import { colors } from "./colors";
+
+const screenHeight = Dimensions.get("window").height;
+
+export default function LoginScreen({ navigation }) {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [focus, setFocus] = useState(false);
+
+  const user = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+
+  const validateInputs = () => {
+    if (!name || !password) {
+      setErrorMessage("Nom ou mot de passe invalide.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleLogin = async () => {
+    setErrorMessage("");
+    if (!validateInputs()) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/signin`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, password }),
+        },
+      );
+
+      const data = await response.json();
+      if (data.result) {
+        dispatch(
+          login({
+            name: data.foundUser.name,
+            token: data.foundUser.token,
+            status: data.foundUser.status,
+          }),
+        );
+      } else {
+        setErrorMessage(
+          data.message || "Le nom ou le mot de passe est invalide.",
+        );
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>👑 ClemApp 👑</Text>
+        <Text style={styles.subtitle}>L'app du week-end !</Text>
+      </View>
+      <View style={styles.content}>
+        <View style={styles.contentHeader}>
+          <Text style={styles.contentHeaderTitle}>Connecte toi</Text>
+          <Text style={styles.contentHeaderSubtitle}>Pour tout savoir !</Text>
+        </View>
+
+        <View>
+          {/*  sert à regrouper le formulaire */}
+          <View>
+            <Text style={styles.label}>Ton prénom</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Alexandre"
+              value={name}
+              onChangeText={setName}
+              keyboardType="text"
+              autoCapitalize="words"
+              onFocus={() => setFocus("name")}
+              onBlur={() => setFocus(null)}
+            />
+          </View>
+          <View style={{ marginBottom: 24 }} />
+          <View>
+            <Text style={styles.label}>Mot de passe</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="************"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              onFocus={() => setFocus("password")}
+              onBlur={() => setFocus(null)}
+            />
+          </View>
+          {errorMessage !== "" && (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          )}
+        </View>
+
+        <View style={{ marginBottom: 24 }} />
+
+        <TouchableOpacity style={styles.buttonPrimary} onPress={handleLogin}>
+          <Text style={styles.buttonPrimaryText}>Se connecter</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.backgroundLight,
+  },
+  header: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginBottom: 16,
+    color: colors.primary,
+  },
+  subtitle: {
+    color: colors.primary,
+    textAlign: "center",
+  },
+  content: {
+    justifyContent: "space-between",
+    backgroundColor: colors.background,
+    borderTopLeftRadius: 48,
+    borderTopRightRadius: 48,
+    width: "100%",
+    padding: 40,
+    minHeight: screenHeight * 0.6,
+  },
+  contentHeader: {
+    marginBottom: 32,
+    color: colors.primaryLight,
+  },
+  contentHeaderTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: colors.primaryLight,
+  },
+  contentHeaderSubtitle: {
+    color: colors.primaryLight,
+  },
+  label: {
+    color: colors.primaryLight,
+    marginBottom: 8,
+    fontWeight: "bold",
+  },
+  input: {
+    width: "100%",
+    backgroundColor: colors.white,
+    borderColor: colors.lightGray,
+    borderWidth: 1,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: colors.destructive,
+    marginTop: 8,
+  },
+  buttonPrimary: {
+    backgroundColor: colors.backgroundLight,
+    padding: 16,
+    borderRadius: 10,
+  },
+  buttonPrimaryText: {
+    color: colors.text,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+});

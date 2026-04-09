@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     alignItems: "center",
+    marginBottom: 70,
   },
   title: {
     color: colors.primary,

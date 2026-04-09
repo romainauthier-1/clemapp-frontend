@@ -1,14 +1,14 @@
 export const colors = {
-  primary: "#A23FB3",
+  primary: "#0A6161",
   primaryLight: "#F7ECF8",
-  secondary: "#B3A23F",
-  secondaryLight: "#ECE7CA",
+  secondary: "#96B5B4",
+  secondaryLight: "#94B59E",
   white: "#FFFFFF",
   text: "#536176",
   muted: "#8692a7",
   lightGray: "#c4c9cd",
-  background: "#3FB3A2",
-  backgroundLight: "#CAECE7",
+  background: "#0A0A61",
+  backgroundLight: "#96B5B4",
   destructive: "#ca0d0d",
 };
 

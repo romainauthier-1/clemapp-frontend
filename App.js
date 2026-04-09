@@ -87,7 +87,7 @@ export default function App({ navigation }) {
           <AppNavigation />
         </NavigationContainer>
         <StatusBar style="auto" />
-        <FlashMessage position="top" />
+        <FlashMessage position="bottom" />
       </PersistGate>
     </Provider>
   );

@@ -19,6 +19,7 @@ import {
 } from "../reducers/surprises";
 import { Lock, LockOpen } from "lucide-react-native";
 import { colors } from "../screens/colors";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -51,7 +52,15 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
 
       if (data.result) {
         dispatch(unlockSurprise(surpriseId));
-        alert(data.message || "Surprise débloquée !");
+        showMessage({
+          message: data.message || "Surprise débloquée !",
+          type: "success",
+          backgroundColor: colors.primary,
+          color: colors.white,
+          style: {
+            borderRadius: 10,
+          },
+        });
         setAnswerInput(null);
       }
     } catch (err) {
@@ -166,7 +175,15 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
 
       if (data.result) {
         dispatch(unlockSurprise(surpriseId));
-        alert(data.message || "Surprise débloquée !");
+        showMessage({
+          message: data.message || "Surprise débloquée !",
+          type: "success",
+          backgroundColor: colors.primary,
+          color: colors.white,
+          style: {
+            borderRadius: 10,
+          },
+        });
       }
     } catch (err) {
       console.error(err.message);
@@ -187,7 +204,15 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
 
       if (data.result) {
         dispatch(lockSurprise(surpriseId));
-        alert(data.message || "Surprise verrouilée !");
+        showMessage({
+          message: data.message || "Surprise verrouillée !",
+          type: "info",
+          backgroundColor: colors.primaryLight,
+          color: colors.text,
+          style: {
+            borderRadius: 10,
+          },
+        });
       }
     } catch (err) {
       console.error(err.message);
@@ -251,19 +276,12 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    backgroundColor: colors.primaryLight,
-  },
   surpriseCard: {
     borderWidth: 1,
     borderColor: colors.lightGray,
     borderRadius: 15,
     padding: 10,
-    width: "90%",
+    width: "80%",
     height: screenHeight * 0.3,
     marginTop: 20,
     marginBottom: 20,
@@ -271,6 +289,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     backgroundColor: colors.backgroundLight,
+    alignSelf: "center",
   },
   input: {
     borderColor: colors.lightGray,
@@ -278,6 +297,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     width: "80%",
+    color: colors.muted,
   },
   button: {
     backgroundColor: colors.background,

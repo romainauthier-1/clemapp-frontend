@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Touchable,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +26,15 @@ export default function SurprisesScreen({ navigation }) {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const surprises = useSelector((state) => state.surprises.surprises);
+  const [isLoading, setIsLoading] = useState(false);
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
   const getSurprises = async () => {
     try {
       const response = await fetch(
@@ -64,11 +73,17 @@ export default function SurprisesScreen({ navigation }) {
           type: "success",
           backgroundColor: colors.primary,
           color: colors.white,
+          style: {
+            borderRadius: 10,
+          },
         });
       } else {
         showMessage({
           message: data.message || "Eh non, mauvaise réponse !",
           type: "warning",
+          style: {
+            borderRadius: 10,
+          },
         });
       }
     } catch (err) {
@@ -97,7 +112,10 @@ export default function SurprisesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollView}
+      >
         <Text style={styles.title}>
           {unlockedSurprisesCount} / 30 surprises débloquées !
         </Text>
@@ -114,33 +132,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
   },
-  surpriseCard: {
-    borderWidth: 1,
-    borderColor: colors.lightGray,
-    borderRadius: 15,
-    padding: 10,
-    width: "90%",
-    height: screenHeight * 0.3,
-    marginTop: 20,
-    marginBottom: 20,
+  scrollView: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-evenly",
-  },
-  input: {
-    borderColor: colors.lightGray,
-    borderWidth: 1,
-    borderRadius: 15,
-    padding: 10,
-    width: "80%",
-  },
-  button: {
-    backgroundColor: colors.background,
-    padding: 10,
-    borderRadius: 15,
-  },
-  text: {
-    color: colors.white,
   },
   title: {
     color: colors.primary,

@@ -23,7 +23,9 @@ export default function LogOutScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🤙 Salut {user.name} !</Text>
+      <Text style={styles.title}>
+        🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
+      </Text>
       <TouchableOpacity
         onPress={() => dispatch(logout())}
         style={styles.logoutButton}

@@ -7,6 +7,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +21,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [focus, setFocus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector((state) => state.user);
 
@@ -38,6 +40,7 @@ export default function LoginScreen({ navigation }) {
     if (!validateInputs()) return;
 
     try {
+      setIsLoading(true);
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/signin`,
         {
@@ -60,9 +63,11 @@ export default function LoginScreen({ navigation }) {
         setErrorMessage(
           data.message || "Le nom ou le mot de passe est invalide.",
         );
+        setIsLoading(false);
       }
     } catch (err) {
       console.error(err.message);
+      setIsLoading(false);
     }
   };
 
@@ -75,53 +80,59 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.title}>👑 ClemApp 👑</Text>
         <Text style={styles.subtitle}>L'app du week-end !</Text>
       </View>
-      <View style={styles.content}>
-        <View style={styles.contentHeader}>
-          <Text style={styles.contentHeaderTitle}>Connecte toi</Text>
-          <Text style={styles.contentHeaderSubtitle}>Pour tout savoir !</Text>
+      {isLoading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-
-        <View>
-          {/*  sert à regrouper le formulaire */}
-          <View>
-            <Text style={styles.label}>Ton prénom</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Alexandre"
-              value={name}
-              onChangeText={setName}
-              keyboardType="text"
-              autoCapitalize="words"
-              onFocus={() => setFocus("name")}
-              onBlur={() => setFocus(null)}
-            />
+      ) : (
+        <View style={styles.content}>
+          <View style={styles.contentHeader}>
+            <Text style={styles.contentHeaderTitle}>Connecte toi</Text>
+            <Text style={styles.contentHeaderSubtitle}>Pour tout savoir !</Text>
           </View>
+
+          <View>
+            {/*  sert à regrouper le formulaire */}
+            <View>
+              <Text style={styles.label}>Ton prénom</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Alexandre"
+                value={name}
+                onChangeText={setName}
+                keyboardType="text"
+                autoCapitalize="words"
+                onFocus={() => setFocus("name")}
+                onBlur={() => setFocus(null)}
+              />
+            </View>
+            <View style={{ marginBottom: 24 }} />
+            <View>
+              <Text style={styles.label}>Mot de passe</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="************"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                onFocus={() => setFocus("password")}
+                onBlur={() => setFocus(null)}
+              />
+            </View>
+            {errorMessage !== "" && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
+          </View>
+
           <View style={{ marginBottom: 24 }} />
-          <View>
-            <Text style={styles.label}>Mot de passe</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="************"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              onFocus={() => setFocus("password")}
-              onBlur={() => setFocus(null)}
-            />
-          </View>
-          {errorMessage !== "" && (
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          )}
+          <TouchableOpacity style={styles.buttonPrimary} onPress={handleLogin}>
+            <Text style={styles.buttonPrimaryText}>Se connecter</Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={{ marginBottom: 24 }} />
-
-        <TouchableOpacity style={styles.buttonPrimary} onPress={handleLogin}>
-          <Text style={styles.buttonPrimaryText}>Se connecter</Text>
-        </TouchableOpacity>
-      </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -177,6 +188,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
+    color: colors.muted,
     backgroundColor: colors.white,
     borderColor: colors.lightGray,
     borderWidth: 1,

@@ -4,9 +4,10 @@ import { Provider } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
 
 import { PartyPopper, Gift, SquareArrowRightExit } from "lucide-react-native";
@@ -38,28 +39,77 @@ const Stack = createNativeStackNavigator();
 
 const HomeTabs = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 10,
+          position: "absolute",
+          borderTopWidth: 0,
+          elevation: 0,
+          marginHorizontal: 20,
+          borderRadius: 25,
+          marginBottom: 10,
+          backgroundColor: colors.backgroundLight,
+        },
+      }}
+    >
       <Tab.Screen
         name="Accueil"
         component={WelcomeScreen}
         options={{
-          tabBarIcon: () => <PartyPopper size={20} color={colors.secondary} />,
+          tabBarIcon: ({ focused, color, size }) => (
+            <PartyPopper
+              size={focused ? 30 : 20}
+              color={focused ? colors.primary : colors.secondary}
+            />
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.secondary,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+            marginBottom: 5,
+          },
         }}
       />
       <Tab.Screen
         name="Surprises"
         component={SurprisesScreen}
         options={{
-          tabBarIcon: () => <Gift size={20} color={colors.secondary} />,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Gift
+              size={focused ? 30 : 20}
+              color={focused ? colors.primary : colors.secondary}
+            />
+          ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.secondary,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+            marginBottom: 5,
+          },
         }}
       />
       <Tab.Screen
         name="Déconnexion"
         component={LogOutScreen}
         options={{
-          tabBarIcon: () => (
-            <SquareArrowRightExit size={20} color={colors.secondary} />
+          tabBarIcon: ({ focused, color, size }) => (
+            <SquareArrowRightExit
+              size={focused ? 30 : 20}
+              color={focused ? colors.primary : colors.secondary}
+            />
           ),
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.secondary,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+            marginBottom: 5,
+          },
         }}
       />
     </Tab.Navigator>
@@ -83,21 +133,14 @@ export default function App({ navigation }) {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <NavigationContainer>
-          <AppNavigation />
-        </NavigationContainer>
-        <StatusBar style="auto" />
-        <FlashMessage position="bottom" />
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <AppNavigation />
+          </NavigationContainer>
+          <StatusBar style="auto" />
+          <FlashMessage position="bottom" />
+        </SafeAreaProvider>
       </PersistGate>
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

@@ -73,7 +73,6 @@ export default function WelcomeScreen({ navigation }) {
           source={{ uri: weatherIcon }}
           resizeMode="contain"
         />
-        <Text>{weatherIcon}</Text>
       </View>
     );
   });

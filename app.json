@@ -31,6 +31,21 @@
           "icon": "./assets/icon.png"
         }
       }
+    },
+    "plugins": [
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "184e355b-7696-46f8-bc6b-2cd710194772"
+      }
+    },
+    "owner": "dankysten",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/184e355b-7696-46f8-bc6b-2cd710194772"
     }
   }
 }

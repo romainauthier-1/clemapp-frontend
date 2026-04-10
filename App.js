@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,6 +9,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { setPushToken } from "./reducers/user";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import { useEffect } from "react";
 
 import {
   PartyPopper,
@@ -21,7 +27,6 @@ import { colors } from "./screens/colors";
 import user from "./reducers/user";
 import surprises from "./reducers/surprises";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
 const reducers = combineReducers({ user, surprises });
 
 const persistConfig = { key: "ClemApp2", storage: AsyncStorage };
@@ -40,11 +45,13 @@ import SurprisesScreen from "./screens/SurprisesScreen";
 import LogOutScreen from "./screens/LogOutScreen";
 import WheelScreen from "./screens/WheelScreen";
 import WheelScreenSVG from "./screens/WheelScreenSVG";
+import EventScreen from "./screens/EventScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const HomeTabs = () => {
+  const user = useSelector((state) => state.user);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -119,6 +126,27 @@ const HomeTabs = () => {
           },
         }}
       />
+      {user.status === "star" && (
+        <Tab.Screen
+          name="Event"
+          component={EventScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <PartyPopper
+                size={focused ? 30 : 20}
+                color={focused ? colors.primary : colors.secondary}
+              />
+            ),
+            tabBarActiveTintColor: colors.primary,
+            tabBarInactiveTintColor: colors.secondary,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "bold",
+              marginBottom: 5,
+            },
+          }}
+        />
+      )}
       <Tab.Screen
         name="Déconnexion"
         component={LogOutScreen}
@@ -144,6 +172,70 @@ const HomeTabs = () => {
 
 const AppNavigation = () => {
   const isConnected = useSelector((state) => state.user.isConnected);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isConnected) {
+      registerForPushNotificationsAsync().then((token) => {
+        token && console.log("PushToken récupéré :", token);
+      });
+    }
+  }, [isConnected]);
+
+  const registerForPushNotificationsAsync = async () => {
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        showMessage({
+          message: "Permission de notifications refusée",
+          type: "warning",
+          style: {
+            borderRadius: 10,
+            marginBottom: 15,
+          },
+        });
+        return;
+      }
+      const projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
+      if (!projectId) {
+        handleRegistrationError("Project ID not found");
+      }
+      try {
+        const pushTokenString = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+        console.log(pushTokenString);
+        dispatch(setPushToken(pushTokenString));
+        return pushTokenString;
+      } catch (e) {
+        handleRegistrationError(`${e}`);
+      }
+    } else {
+      handleRegistrationError(
+        "Must use physical device for push notifications",
+      );
+    }
+  };
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isConnected ? (
@@ -154,6 +246,14 @@ const AppNavigation = () => {
     </Stack.Navigator>
   );
 };
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App({ navigation }) {
   return (

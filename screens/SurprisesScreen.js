@@ -75,6 +75,7 @@ export default function SurprisesScreen({ navigation }) {
           color: colors.white,
           style: {
             borderRadius: 10,
+            marginBottom: 15,
           },
         });
       } else {
@@ -83,6 +84,7 @@ export default function SurprisesScreen({ navigation }) {
           type: "warning",
           style: {
             borderRadius: 10,
+            marginBottom: 15,
           },
         });
       }

@@ -46,7 +46,7 @@ import EventScreen from "./screens/EventScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const HomeTabs = () => {
+const HomeTabs = ({ onActivatePush }) => {
   const user = useSelector((state) => state.user);
   return (
     <Tab.Navigator
@@ -145,7 +145,6 @@ const HomeTabs = () => {
       )}
       <Tab.Screen
         name="Déconnexion"
-        component={LogOutScreen}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <SquareArrowRightExit
@@ -161,7 +160,9 @@ const HomeTabs = () => {
             marginBottom: 5,
           },
         }}
-      />
+      >
+        {(props) => <LogOutScreen {...props} onActivatePush={onActivatePush} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
@@ -185,6 +186,8 @@ const AppNavigation = () => {
   const isConnected = useSelector((state) => state.user.isConnected);
 
   const registerServiceWorker = async () => {
+    console.log("SW présent dans navigator ?", "serviceWorker" in navigator);
+    console.log("PushManager présent dans window ?", "PushManager" in window);
     if ("serviceWorker" in navigator && "PushManager" in window) {
       try {
         const registration =
@@ -206,7 +209,7 @@ const AppNavigation = () => {
       console.log("Déjà abonné :", existingSubscription);
       return;
     }
-
+    console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
@@ -217,25 +220,24 @@ const AppNavigation = () => {
     console.log("Nouvelle souscription obtenue !", subscription);
   };
 
-  useEffect(() => {
-    const setupPush = async () => {
-      const registration = await registerServiceWorker();
+  const setupPush = async () => {
+    const registration = await registerServiceWorker();
 
-      if (registration) {
-        console.log(
-          "On peut maintenant demander la souscription !",
-          registration,
-        );
-        await subscribeUser();
-      }
-    };
+    if (registration) {
+      console.log(
+        "On peut maintenant demander la souscription !",
+        registration,
+      );
+      await subscribeUser();
+    }
+  };
 
-    setupPush();
-  }, []);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isConnected ? (
-        <Stack.Screen name="ClemApp | Bienvenue" component={HomeTabs} />
+        <Stack.Screen name="ClemApp | Bienvenue">
+          {(props) => <HomeTabs {...props} onActivatePush={setupPush} />}
+        </Stack.Screen>
       ) : (
         <Stack.Screen name="ClemApp | Connexion" component={LoginScreen} />
       )}

@@ -50,7 +50,6 @@ export default function WelcomeScreen({ navigation }) {
       if (data.result) {
         setWeatherInfos(data.generalInfos);
         setWeatherForecast(data.forecast);
-        console.log("Météo reçue:", data);
       }
     } catch (err) {
       console.error(err.message);

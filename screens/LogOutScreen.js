@@ -17,7 +17,7 @@ import { colors } from "./colors";
 
 const screenHeight = Dimensions.get("window").height;
 
-export default function LogOutScreen({ navigation }) {
+export default function LogOutScreen({ navigation, onActivatePush }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
@@ -28,6 +28,9 @@ export default function LogOutScreen({ navigation }) {
       </Text>
       <Pressable onPress={() => dispatch(logout())} style={styles.logoutButton}>
         <Text style={styles.text}>Déconnexion</Text>
+      </Pressable>
+      <Pressable onPress={onActivatePush} style={styles.logoutButton}>
+        <Text style={styles.text}>🔔 Notifs</Text>
       </Pressable>
     </View>
   );

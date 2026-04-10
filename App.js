@@ -169,6 +169,33 @@ const HomeTabs = () => {
 const AppNavigation = () => {
   const isConnected = useSelector((state) => state.user.isConnected);
 
+  const registerServiceWorker = async () => {
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      try {
+        const registration =
+          await navigator.serviceWorker.register("/serviceWorker.js");
+        console.log("Service Worker enregistré !", registration);
+        return registration;
+      } catch (error) {
+        console.error("Erreur SW:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const setupPush = async () => {
+      const registration = await registerServiceWorker();
+
+      if (registration) {
+        console.log(
+          "On peut maintenant demander la souscription !",
+          registration,
+        );
+      }
+    };
+
+    setupPush();
+  }, []);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isConnected ? (

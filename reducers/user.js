@@ -5,7 +5,6 @@ const initialState = {
   token: null,
   status: null,
   isConnected: false,
-  pushToken: null,
 };
 
 const userSlice = createSlice({
@@ -24,11 +23,8 @@ const userSlice = createSlice({
       state.status = null;
       state.isConnected = false;
     },
-    setPushToken: (state, action) => {
-      state.pushToken = action.payload;
-    },
   },
 });
 
-export const { login, logout, setPushToken } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 export default userSlice.reducer;

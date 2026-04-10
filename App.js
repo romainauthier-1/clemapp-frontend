@@ -60,7 +60,7 @@ const HomeTabs = () => {
           marginHorizontal: 30,
           borderRadius: 25,
           marginBottom: 10,
-          backgroundColor: colors.backgroundLight,
+          backgroundColor: colors.secondary,
           padding: 10,
         },
       }}
@@ -72,11 +72,11 @@ const HomeTabs = () => {
           tabBarIcon: ({ focused, color, size }) => (
             <PartyPopper
               size={focused ? 30 : 20}
-              color={focused ? colors.primary : colors.secondary}
+              color={focused ? colors.backgroundLight : colors.primaryLight}
             />
           ),
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.secondary,
+          tabBarActiveTintColor: colors.backgroundLight,
+          tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "bold",
@@ -91,11 +91,11 @@ const HomeTabs = () => {
           tabBarIcon: ({ focused, color, size }) => (
             <Gift
               size={focused ? 30 : 20}
-              color={focused ? colors.primary : colors.secondary}
+              color={focused ? colors.backgroundLight : colors.primaryLight}
             />
           ),
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.secondary,
+          tabBarActiveTintColor: colors.backgroundLight,
+          tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "bold",
@@ -110,11 +110,11 @@ const HomeTabs = () => {
           tabBarIcon: ({ focused, color, size }) => (
             <LoaderPinwheel
               size={focused ? 30 : 20}
-              color={focused ? colors.primary : colors.secondary}
+              color={focused ? colors.backgroundLight : colors.primaryLight}
             />
           ),
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.secondary,
+          tabBarActiveTintColor: colors.backgroundLight,
+          tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "bold",
@@ -130,11 +130,11 @@ const HomeTabs = () => {
             tabBarIcon: ({ focused, color, size }) => (
               <PartyPopper
                 size={focused ? 30 : 20}
-                color={focused ? colors.primary : colors.secondary}
+                color={focused ? colors.backgroundLight : colors.primaryLight}
               />
             ),
-            tabBarActiveTintColor: colors.primary,
-            tabBarInactiveTintColor: colors.secondary,
+            tabBarActiveTintColor: colors.backgroundLight,
+            tabBarInactiveTintColor: colors.primaryLight,
             tabBarLabelStyle: {
               fontSize: 12,
               fontWeight: "bold",
@@ -150,11 +150,11 @@ const HomeTabs = () => {
           tabBarIcon: ({ focused, color, size }) => (
             <SquareArrowRightExit
               size={focused ? 30 : 20}
-              color={focused ? colors.primary : colors.secondary}
+              color={focused ? colors.backgroundLight : colors.primaryLight}
             />
           ),
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.secondary,
+          tabBarActiveTintColor: colors.backgroundLight,
+          tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "bold",

@@ -2,7 +2,7 @@ import {
   View,
   ScrollView,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInput,
   Dimensions,
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
+    backgroundColor: colors.backgroundLight,
   },
   scrollView: {
     display: "flex",
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 70,
   },
   title: {
-    color: colors.primary,
+    color: colors.white,
     textAlign: "center",
     fontSize: 16,
     marginTop: 40,

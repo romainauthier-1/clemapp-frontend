@@ -43,12 +43,6 @@ export default function WheelScreen() {
       const segmentSize = 360 / guests.length;
       const adjustedAngle = (360 - angleFinal + 360) % 360;
       const winnerIndex = Math.floor(adjustedAngle / segmentSize);
-      console.log("wheelSpin: ", wheelSpin);
-      console.log("progress: ", progress);
-      console.log("angleFinal: ", angleFinal);
-      console.log("segmentSize: ", segmentSize);
-      console.log("adjustedAngle: ", adjustedAngle);
-      console.log("WinnerIndex: ", winnerIndex);
 
       setWinner(guests[winnerIndex]);
     });
@@ -75,8 +69,8 @@ export default function WheelScreen() {
       {/* <View style={styles.pointer} /> */}
 
       <ArrowBigDown
-        style={{ position: "absolute", top: "14%", zIndex: 1 }}
-        color={colors.primary}
+        style={{ position: "absolute", top: "12%", zIndex: 1 }}
+        color={colors.secondary}
         size={30}
       />
       <Animated.View
@@ -86,7 +80,7 @@ export default function WheelScreen() {
       </Animated.View>
 
       <Pressable style={styles.button} onPress={() => spinWheel()}>
-        <Text>Tourner la roue</Text>
+        <Text style={styles.buttonText}>Tourner la roue</Text>
       </Pressable>
       {winner && <Text style={styles.winnerText}> Bravo {winner} ! 🎉</Text>}
     </View>
@@ -100,46 +94,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     paddingBottom: 15,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.backgroundLight,
   },
   wheelContainer: {
     height: 300,
     width: 300,
     borderRadius: 150,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.backgroundLight,
     alignItems: "center",
     justifyContent: "center",
   },
   button: {
     marginTop: 40,
     padding: 15,
-    backgroundColor: colors.background,
-    borderRadius: 10,
+    backgroundColor: colors.secondary,
+    borderRadius: 50,
+    height: 100,
+    width: 300,
     alignItems: "center",
     justifyContent: "center",
   },
-  pointer: {
-    width: 0,
-    height: 0,
-    backgroundColor: "transparent",
-    borderStyle: "solid",
-    borderLeftWidth: 15,
-    borderRightWidth: 15,
-    borderTopWidth: 30,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderTopColor: colors.backgroundLight, // La couleur de la flèche
-    position: "absolute",
-    top: "7%",
-    zIndex: 1,
+  buttonText: {
+    color: colors.white,
+    fontSize: 25,
+    fontWeight: "bold",
   },
   winnerText: {
-    fontSize: 30,
+    fontSize: 50,
     fontWeight: "bold",
-    color: colors.primary,
+    color: colors.white,
     textAlign: "center",
     position: "absolute",
-    top: "60%",
+    top: "57%",
     zIndex: 2,
   },
 });

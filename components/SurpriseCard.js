@@ -22,6 +22,7 @@ import { colors } from "../screens/colors";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("window").width;
 
 export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
   const dispatch = useDispatch();
@@ -55,10 +56,11 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
         showMessage({
           message: data.message || "Surprise débloquée !",
           type: "success",
-          backgroundColor: colors.primary,
+          backgroundColor: colors.background,
           color: colors.white,
           style: {
             borderRadius: 10,
+            width: screenWidth * 0.7,
           },
         });
         setAnswerInput(null);
@@ -88,7 +90,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
   const unlockedSurpriseCard = () => {
     return (
       <View style={styles.surpriseCard}>
-        <LockOpen size={40} color={colors.primary} />
+        <LockOpen size={40} color={colors.primaryLight} />
         <Text style={styles.title}>{surprise.title}</Text>
         <Text style={styles.description}>{surprise.description}</Text>
         <Text style={styles.description}>
@@ -111,7 +113,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
       <View style={styles.surpriseCard}>
         <Lock
           size={40}
-          color={colors.muted}
+          color={colors.primaryLight}
           onPress={() => {
             (setViewRiddle(false), setViewHint(false));
           }}
@@ -153,7 +155,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
   const lockedSurpriseCard = () => {
     return (
       <View style={styles.surpriseCard}>
-        <Lock size={40} color={colors.muted} />
+        <Lock size={40} color={colors.primaryLight} />
         <Text style={styles.title}>
           Cette surprise se débloquera en temps voulu !
         </Text>
@@ -178,10 +180,11 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
         showMessage({
           message: data.message || "Surprise débloquée !",
           type: "success",
-          backgroundColor: colors.primary,
+          backgroundColor: colors.background,
           color: colors.white,
           style: {
             borderRadius: 10,
+            width: screenWidth * 0.7,
           },
         });
       }
@@ -207,10 +210,11 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
         showMessage({
           message: data.message || "Surprise verrouillée !",
           type: "info",
-          backgroundColor: colors.primaryLight,
-          color: colors.text,
+          backgroundColor: colors.background,
+          color: colors.white,
           style: {
             borderRadius: 10,
+            width: screenWidth * 0.7,
           },
         });
       }
@@ -224,11 +228,11 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
         {surprise.isUnlocked ? (
           <LockOpen
             size={40}
-            color={colors.primary}
+            color={colors.primaryLight}
             onPress={() => handleManualLock(surprise._id)}
           />
         ) : (
-          <Lock size={40} color={colors.primary} />
+          <Lock size={40} color={colors.primaryLight} />
         )}
         <Text style={styles.title}>{surprise.title}</Text>
         <Text style={styles.description}>{surprise.description}</Text>
@@ -281,14 +285,14 @@ const styles = StyleSheet.create({
     borderColor: colors.lightGray,
     borderRadius: 15,
     padding: 10,
-    width: "80%",
+    width: screenWidth * 0.8,
     height: screenHeight * 0.3,
     marginTop: 20,
     marginBottom: 20,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.secondary,
     alignSelf: "center",
   },
   input: {
@@ -300,7 +304,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   button: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.primaryLight,
     padding: 10,
     borderRadius: 15,
   },
@@ -308,12 +312,12 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   title: {
-    color: colors.secondary,
+    color: colors.lightGray,
     textAlign: "center",
     fontSize: 18,
   },
   description: {
-    color: colors.text,
+    color: colors.white,
     fontSize: 16,
     textAlign: "center",
   },

@@ -1,7 +1,7 @@
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInput,
   Dimensions,
@@ -129,9 +129,9 @@ export default function LoginScreen({ navigation }) {
 
           <View style={{ marginBottom: 24 }} />
 
-          <TouchableOpacity style={styles.buttonPrimary} onPress={handleLogin}>
+          <Pressable style={styles.buttonPrimary} onPress={handleLogin}>
             <Text style={styles.buttonPrimaryText}>Se connecter</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       )}
     </KeyboardAvoidingView>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.primaryLight,
   },
   header: {
     flex: 1,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   content: {
     justifyContent: "space-between",
-    backgroundColor: colors.background,
+    backgroundColor: colors.primary,
     borderTopLeftRadius: 48,
     borderTopRightRadius: 48,
     width: "100%",
@@ -172,25 +172,24 @@ const styles = StyleSheet.create({
   },
   contentHeader: {
     marginBottom: 32,
-    color: colors.primaryLight,
   },
   contentHeaderTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: colors.primaryLight,
+    color: colors.lightGray,
   },
   contentHeaderSubtitle: {
-    color: colors.primaryLight,
+    color: colors.lightGray,
   },
   label: {
-    color: colors.primaryLight,
+    color: colors.lightGray,
     marginBottom: 8,
     fontWeight: "bold",
   },
   input: {
     width: "100%",
-    color: colors.muted,
-    backgroundColor: colors.white,
+    color: colors.white,
+    backgroundColor: colors.primaryLight,
     borderColor: colors.lightGray,
     borderWidth: 1,
     paddingTop: 8,
@@ -205,12 +204,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonPrimary: {
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.primaryLight,
     padding: 16,
     borderRadius: 10,
   },
   buttonPrimaryText: {
-    color: colors.text,
+    color: colors.lightGray,
     fontWeight: "bold",
     textAlign: "center",
   },

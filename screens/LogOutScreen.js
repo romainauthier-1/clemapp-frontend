@@ -2,7 +2,7 @@ import {
   View,
   ScrollView,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInput,
   Dimensions,
@@ -26,12 +26,9 @@ export default function LogOutScreen({ navigation }) {
       <Text style={styles.title}>
         🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
       </Text>
-      <TouchableOpacity
-        onPress={() => dispatch(logout())}
-        style={styles.logoutButton}
-      >
+      <Pressable onPress={() => dispatch(logout())} style={styles.logoutButton}>
         <Text style={styles.text}>Déconnexion</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -42,6 +39,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     flex: 1,
+    backgroundColor: colors.backgroundLight,
   },
   title: {
     fontSize: 30,
@@ -52,14 +50,16 @@ const styles = StyleSheet.create({
   logoutButton: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-    height: 60,
-    width: 150,
-    padding: 8,
-    borderRadius: 15,
+    justifyContent: "space-evenly",
+    backgroundColor: colors.secondary,
+    height: 100,
+    width: 200,
+    padding: 10,
+    borderRadius: 50,
   },
   text: {
     color: colors.white,
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });

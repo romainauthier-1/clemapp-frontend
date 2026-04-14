@@ -184,6 +184,7 @@ const urlBase64ToUint8Array = (base64String) => {
 
 const AppNavigation = () => {
   const isConnected = useSelector((state) => state.user.isConnected);
+  const userToken = useSelector((state) => state.user.token);
 
   const registerServiceWorker = async () => {
     console.log("SW présent dans navigator ?", "serviceWorker" in navigator);
@@ -207,7 +208,7 @@ const AppNavigation = () => {
       await registration.pushManager.getSubscription();
     if (existingSubscription) {
       console.log("Déjà abonné :", existingSubscription);
-      return;
+      // return;
     }
     console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
     const subscription = await registration.pushManager.subscribe({
@@ -218,6 +219,22 @@ const AppNavigation = () => {
     });
 
     console.log("Nouvelle souscription obtenue !", subscription);
+
+    const subscriptionJSON = subscription.toJSON();
+
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/subscribe`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: userToken,
+          subscription: subscriptionJSON,
+        }),
+      },
+    );
+    const data = await response.json();
+    console.log(data);
   };
 
   const setupPush = async () => {

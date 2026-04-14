@@ -4,11 +4,11 @@
     "slug": "ClemApp-frontend",
     "version": "1.2.1",
     "orientation": "portrait",
-    "icon": "./assets/apple-touch-icon.png",
+    "icon": "./public/apple-touch-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/apple-touch-icon.png",
+      "image": "./public/apple-touch-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#CAECE7"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/apple-touch-icon.png",
+        "foregroundImage": "./public/apple-touch-icon.png",
         "backgroundColor": "#CAECE7"
       },
       "edgeToEdgeEnabled": true
@@ -28,8 +28,8 @@
       "themeColor": "#CAECE7",
       "config": {
         "pwa": {
-          "icon": "./assets/apple-touch-icon.png",
-          "appleTouchIcon": "./assets/apple-touch-icon.png"
+          "icon": "./public/apple-touch-icon.png",
+          "appleTouchIcon": "./public/apple-touch-icon.png"
         }
       }
     },

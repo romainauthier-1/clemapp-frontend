@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     marginTop: 10,
+    alignSelf: "center",
   },
   weatherForecastItem: {
     padding: 10,

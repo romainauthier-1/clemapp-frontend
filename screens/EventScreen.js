@@ -22,9 +22,12 @@ export default function EventScreen() {
   const [notifTitle, setNotifTitle] = useState(null);
   const [notifBody, setNotifBody] = useState(null);
   const isFocused = useIsFocused();
+  const tokenInRedux = useSelector((state) => state.user.token);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const getAllUsers = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/all`,
@@ -42,6 +45,8 @@ export default function EventScreen() {
           marginBottom: 15,
         },
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,10 +57,16 @@ export default function EventScreen() {
 
   const userListToDisplay = userList?.map((user, index) => {
     const isSelected = tempTokenList.includes(user.token);
+    if (tokenInRedux === user.token) {
+      return;
+    }
+
     return (
       <View style={styles.userContainer} key={index}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.userName}>{user.name}</Text>
+          <Text style={styles.userName}>
+            {user.name[0].toUpperCase() + user.name.slice(1)}
+          </Text>
           <Text style={styles.userSubscription}>
             {user.subscription ? "✅ Notifs activées" : "❌ Notifs désactivées"}
           </Text>
@@ -89,6 +100,7 @@ export default function EventScreen() {
   });
 
   const sendNotification = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
@@ -124,10 +136,14 @@ export default function EventScreen() {
           marginBottom: 15,
         },
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const sendFilRougeNotification = async () => {
+    setIsLoading(true);
+
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
@@ -163,77 +179,80 @@ export default function EventScreen() {
           marginBottom: 15,
         },
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const canSend = tempTokenList.length > 0 && notifTitle && notifBody;
-  const canSendFilRouge = tempTokenList.length > 0;
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.headerTitle}>Centre de Commande</Text>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Fil Rouge</Text>
-        <Pressable
-          disabled={!canSendFilRouge}
-          onPress={sendFilRougeNotification}
-          style={[
-            styles.mainButton,
-            styles.filRougeButton,
-            { opacity: canSendFilRouge ? 1 : 0.5 },
-          ]}
-        >
-          <Text style={styles.buttonText}>Déclencher</Text>
-        </Pressable>
-      </View>
-
-      <View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Envoyer une notification personnalisée
-          </Text>
-          <Text style={styles.sectionTitle}>
-            Destinataires ({tempTokenList.length})
-          </Text>
-          <View style={styles.listContainer}>{userListToDisplay}</View>
+      {isLoading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
+      ) : (
+        <>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Fil Rouge</Text>
+            <Pressable
+              onPress={sendFilRougeNotification}
+              style={[styles.mainButton, styles.filRougeButton, { opacity: 1 }]}
+            >
+              <Text style={styles.buttonText}>Déclencher</Text>
+            </Pressable>
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Message personnalisé</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Titre de la notif'"
-            value={notifTitle}
-            onChangeText={setNotifTitle}
-            autoCapitalize="sentences"
-            onFocus={() => setFocus("notifTitle")}
-            onBlur={() => setFocus(null)}
-          ></TextInput>
-          <TextInput
-            style={styles.input}
-            placeholder="Contenu de la notif'"
-            value={notifBody}
-            onChangeText={setNotifBody}
-            autoCapitalize="sentences"
-            multiline={true}
-            onFocus={() => setFocus("notifBody")}
-            onBlur={() => setFocus(null)}
-          ></TextInput>
-          <Pressable
-            disabled={!canSend}
-            onPress={sendNotification}
-            style={[
-              styles.mainButton,
-              styles.sendButton,
-              { opacity: canSend ? 1 : 0.5 },
-            ]}
-          >
-            <Text style={styles.buttonText}>Envoyer</Text>
-          </Pressable>
-        </View>
-        <View style={{ height: 50 }} />
-      </View>
+          <View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                Envoyer une notification personnalisée
+              </Text>
+              <Text style={styles.sectionTitle}>
+                Destinataires ({tempTokenList.length})
+              </Text>
+              <View style={styles.listContainer}>{userListToDisplay}</View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Message personnalisé</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Titre de la notif'"
+                value={notifTitle}
+                onChangeText={setNotifTitle}
+                autoCapitalize="sentences"
+                onFocus={() => setFocus("notifTitle")}
+                onBlur={() => setFocus(null)}
+              ></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Contenu de la notif'"
+                value={notifBody}
+                onChangeText={setNotifBody}
+                autoCapitalize="sentences"
+                multiline={true}
+                onFocus={() => setFocus("notifBody")}
+                onBlur={() => setFocus(null)}
+              ></TextInput>
+              <Pressable
+                disabled={!canSend}
+                onPress={sendNotification}
+                style={[
+                  styles.mainButton,
+                  styles.sendButton,
+                  { opacity: canSend ? 1 : 0.5 },
+                ]}
+              >
+                <Text style={styles.buttonText}>Envoyer</Text>
+              </Pressable>
+            </View>
+            <View style={{ height: 50 }} />
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }

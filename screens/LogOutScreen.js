@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Touchable,
+  ActivityIndicator,
 } from "react-native";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,12 +33,14 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
         <Text style={styles.text}>Déconnexion</Text>
       </Pressable>
       {isNotifActive ? (
-        <Text>Notifications activées</Text>
+        <View style={styles.notif}>
+          <Text style={styles.notifText}>Notifications activées</Text>
+        </View>
       ) : (
         <Pressable
           onPress={() => {
             onActivatePush;
-            dispatch(activateNotif());
+            dispatch(activateNotif(true));
           }}
           style={styles.logoutButton}
         >
@@ -68,13 +71,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     backgroundColor: colors.secondary,
     height: 100,
-    width: 200,
+    width: 210,
     padding: 10,
     borderRadius: 50,
   },
   text: {
     color: colors.white,
     fontSize: 20,
+    fontWeight: "bold",
+  },
+  notif: {
+    backgroundColor: colors.secondaryLight,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 210,
+    height: 100,
+    borderRadius: 50,
+    padding: 10,
+    opacity: 0.5,
+  },
+  notifText: {
+    color: colors.white,
+    textAlign: "center",
+    fontSize: 15,
     fontWeight: "bold",
   },
 });

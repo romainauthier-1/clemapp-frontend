@@ -5,6 +5,8 @@ const initialState = {
   token: null,
   status: null,
   isConnected: false,
+  notifActivated: false,
+  userList: [],
 };
 
 const userSlice = createSlice({
@@ -23,8 +25,14 @@ const userSlice = createSlice({
       state.status = null;
       state.isConnected = false;
     },
+    activateNotif: (state, action) => {
+      state.notifActivated = action.payload;
+    },
+    setUserList: (state, action) => {
+      state.userList = action.payload;
+    },
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, activateNotif, setUserList } = userSlice.actions;
 export default userSlice.reducer;

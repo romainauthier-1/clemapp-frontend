@@ -202,15 +202,18 @@ const AppNavigation = () => {
   };
 
   const subscribeUser = async () => {
+    console.log("1. Entrée dans subscribeUser");
+    console.log("2. Token récupéré :", userToken);
+
     const registration = await navigator.serviceWorker.ready;
 
-    const existingSubscription =
-      await registration.pushManager.getSubscription();
-    if (existingSubscription) {
-      console.log("Déjà abonné :", existingSubscription);
-      // return;
-    }
-    console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
+    // const existingSubscription =
+    //   await registration.pushManager.getSubscription();
+    // // if (existingSubscription) {
+    // //   console.log("Déjà abonné :", existingSubscription);
+    // //   // return;
+    // // }
+    // console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
@@ -218,7 +221,7 @@ const AppNavigation = () => {
       ),
     });
 
-    console.log("Nouvelle souscription obtenue !", subscription);
+    console.log("3. Subscription obtenue, envoi au backend...");
 
     const subscriptionJSON = subscription.toJSON();
 
@@ -234,7 +237,7 @@ const AppNavigation = () => {
       },
     );
     const data = await response.json();
-    console.log(data);
+    console.log("4. Réponse Backend :", data);
   };
 
   const setupPush = async () => {

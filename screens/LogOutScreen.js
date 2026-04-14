@@ -14,12 +14,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers/user";
 import { colors } from "./colors";
+import { activateNotif } from "../reducers/user";
 
 const screenHeight = Dimensions.get("window").height;
 
 export default function LogOutScreen({ navigation, onActivatePush }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const isNotifActive = useSelector((state) => state.user.notifActivated);
 
   return (
     <View style={styles.container}>
@@ -29,9 +31,19 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
       <Pressable onPress={() => dispatch(logout())} style={styles.logoutButton}>
         <Text style={styles.text}>Déconnexion</Text>
       </Pressable>
-      <Pressable onPress={onActivatePush} style={styles.logoutButton}>
-        <Text style={styles.text}>🔔 Notifs</Text>
-      </Pressable>
+      {isNotifActive ? (
+        <Text>Notifications activées</Text>
+      ) : (
+        <Pressable
+          onPress={() => {
+            onActivatePush;
+            dispatch(activateNotif());
+          }}
+          style={styles.logoutButton}
+        >
+          <Text style={styles.text}>🔔 Active les notifs !</Text>
+        </Pressable>
+      )}
     </View>
   );
 }

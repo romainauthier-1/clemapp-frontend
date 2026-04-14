@@ -124,7 +124,7 @@ const HomeTabs = ({ onActivatePush }) => {
       />
       {user.status === "star" && (
         <Tab.Screen
-          name="Event"
+          name="Fil Rouge"
           component={EventScreen}
           options={{
             tabBarIcon: ({ focused, color, size }) => (

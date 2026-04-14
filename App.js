@@ -122,27 +122,28 @@ const HomeTabs = ({ onActivatePush }) => {
           },
         }}
       />
-      {user.status === "star" && (
-        <Tab.Screen
-          name="Fil Rouge"
-          component={EventScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <PartyPopper
-                size={focused ? 30 : 20}
-                color={focused ? colors.backgroundLight : colors.primaryLight}
-              />
-            ),
-            tabBarActiveTintColor: colors.backgroundLight,
-            tabBarInactiveTintColor: colors.primaryLight,
-            tabBarLabelStyle: {
-              fontSize: 12,
-              fontWeight: "bold",
-              marginBottom: 5,
-            },
-          }}
-        />
-      )}
+      {user.status === "star" ||
+        (user.status === "guest+" && (
+          <Tab.Screen
+            name="Fil Rouge"
+            component={EventScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <PartyPopper
+                  size={focused ? 30 : 20}
+                  color={focused ? colors.backgroundLight : colors.primaryLight}
+                />
+              ),
+              tabBarActiveTintColor: colors.backgroundLight,
+              tabBarInactiveTintColor: colors.primaryLight,
+              tabBarLabelStyle: {
+                fontSize: 12,
+                fontWeight: "bold",
+                marginBottom: 5,
+              },
+            }}
+          />
+        ))}
       <Tab.Screen
         name="Déconnexion"
         options={{

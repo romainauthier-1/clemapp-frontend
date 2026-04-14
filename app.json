@@ -2,13 +2,13 @@
   "expo": {
     "name": "ClemApp-frontend",
     "slug": "ClemApp-frontend",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#CAECE7"
     },
@@ -17,18 +17,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "/icon.png",
         "backgroundColor": "#CAECE7"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "/favicon.png",
       "backgroundColor": "#CAECE7",
       "themeColor": "#CAECE7",
       "config": {
         "pwa": {
-          "icon": "./assets/icon.png"
+          "icon": "/icon.png"
         }
       }
     },

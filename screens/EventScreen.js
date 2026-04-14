@@ -7,11 +7,11 @@ import {
   Pressable,
   Platform,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserList, activateNotif } from "../reducers/user";
 import { showMessage, hideMessage } from "react-native-flash-message";
-import { useIsFocused } from "@react-navigation/native";
 import { colors } from "./colors";
 
 export default function EventScreen() {
@@ -21,7 +21,6 @@ export default function EventScreen() {
   const [tempTokenList, setTempTokenList] = useState([]);
   const [notifTitle, setNotifTitle] = useState(null);
   const [notifBody, setNotifBody] = useState(null);
-  const isFocused = useIsFocused();
   const tokenInRedux = useSelector((state) => state.user.token);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -65,7 +64,9 @@ export default function EventScreen() {
       <View style={styles.userContainer} key={index}>
         <View style={{ flex: 1 }}>
           <Text style={styles.userName}>
-            {user.name[0].toUpperCase() + user.name.slice(1)}
+            {user.name
+              ? user.name[0].toUpperCase() + user.name.slice(1)
+              : "Anonyme"}
           </Text>
           <Text style={styles.userSubscription}>
             {user.subscription ? "✅ Notifs activées" : "❌ Notifs désactivées"}
@@ -224,8 +225,6 @@ export default function EventScreen() {
                 value={notifTitle}
                 onChangeText={setNotifTitle}
                 autoCapitalize="sentences"
-                onFocus={() => setFocus("notifTitle")}
-                onBlur={() => setFocus(null)}
               ></TextInput>
               <TextInput
                 style={styles.input}
@@ -234,8 +233,6 @@ export default function EventScreen() {
                 onChangeText={setNotifBody}
                 autoCapitalize="sentences"
                 multiline={true}
-                onFocus={() => setFocus("notifBody")}
-                onBlur={() => setFocus(null)}
               ></TextInput>
               <Pressable
                 disabled={!canSend}

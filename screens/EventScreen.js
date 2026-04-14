@@ -49,7 +49,7 @@ export default function EventScreen() {
     setTempUserList([]);
   }, []);
 
-  const userListToDisplay = userList.map((user, index) => {
+  const userListToDisplay = userList?.map((user, index) => {
     return (
       <View style={styles.userContainer} key={index}>
         <Text style={styles.userName}>{user.name}</Text>

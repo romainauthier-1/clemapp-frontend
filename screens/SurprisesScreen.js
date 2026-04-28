@@ -44,6 +44,8 @@ export default function SurprisesScreen({ navigation }) {
 
       if (data.result) {
         dispatch(setSurprises(data.allSurprises));
+      } else {
+        dispatch(setSurprises([]));
       }
     } catch (err) {
       console.error(err.message);

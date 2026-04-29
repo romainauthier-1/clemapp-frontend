@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { useEffect } from "react";
@@ -17,6 +17,7 @@ import {
   Gift,
   SquareArrowRightExit,
   LoaderPinwheel,
+  Crown,
 } from "lucide-react-native";
 import { colors } from "./screens/colors";
 
@@ -129,7 +130,7 @@ const HomeTabs = ({ onActivatePush }) => {
             component={EventScreen}
             options={{
               tabBarIcon: ({ focused, color, size }) => (
-                <PartyPopper
+                <Crown
                   size={focused ? 30 : 20}
                   color={focused ? colors.backgroundLight : colors.primaryLight}
                 />
@@ -266,18 +267,33 @@ const AppNavigation = () => {
   );
 };
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: colors.backgroundLight,
+  },
+};
+
 export default function App({ navigation }) {
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <SafeAreaProvider>
-          <NavigationContainer>
+      <SafeAreaProvider>
+        <PersistGate persistor={persistor}>
+          <NavigationContainer theme={MyTheme}>
             <AppNavigation />
           </NavigationContainer>
-          <StatusBar style="auto" />
-          <FlashMessage position="center" />
-        </SafeAreaProvider>
-      </PersistGate>
+        </PersistGate>
+        <StatusBar style="light" translucent={true} />
+        <FlashMessage position="top" />
+      </SafeAreaProvider>
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.backgroundLight,
+  },
+});

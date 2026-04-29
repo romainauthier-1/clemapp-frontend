@@ -197,7 +197,7 @@ export default function EventScreen() {
       ) : (
         <>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Fil Rouge</Text>
+            <Text style={styles.sectionTitle}>🚨 Fil Rouge 🚨</Text>
             <Pressable
               onPress={sendFilRougeNotification}
               style={[styles.mainButton, styles.filRougeButton, { opacity: 1 }]}
@@ -257,7 +257,7 @@ export default function EventScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F7FA",
+    backgroundColor: colors.backgroundLight,
     paddingTop: 50,
     paddingHorizontal: 20,
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#333",
+    color: colors.primary,
     textAlign: "center",
   },
   section: {
@@ -283,7 +283,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 10,
-    color: "#666",
+    color: colors.secondary,
+    textAlign: "center",
   },
   // Style de la liste d'utilisateurs
   userContainer: {

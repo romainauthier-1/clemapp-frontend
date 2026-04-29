@@ -24,8 +24,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "backgroundColor": "#CAECE7",
-      "themeColor": "#CAECE7",
+      "backgroundColor": "#B5A1C4",
+      "themeColor": "#B5A1C4",
       "config": {
         "pwa": {
           "icon": "./public/apple-touch-icon.png",

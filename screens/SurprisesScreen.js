@@ -11,8 +11,9 @@ import {
   Touchable,
   ActivityIndicator,
   Animated,
+  RefreshControl,
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setSurprises,
@@ -24,11 +25,13 @@ import { Lock, LockOpen } from "lucide-react-native";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { colors } from "./colors";
 import SurpriseCard from "../components/SurpriseCard";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const screenHeight = Dimensions.get("window").height;
 
 export default function SurprisesScreen({ navigation }) {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
   const surprises = useSelector((state) => state.surprises.surprises);
   const selectedSurpriseId = useSelector(
@@ -39,10 +42,10 @@ export default function SurprisesScreen({ navigation }) {
       (surprise) => surprise._id === selectedSurpriseId,
     ),
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getSurprises = async () => {
-    setIsLoading(true);
+    !refreshing && setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/all`,
@@ -58,6 +61,20 @@ export default function SurprisesScreen({ navigation }) {
       console.error(err.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    console.log("------ Début du refresh ------");
+    setRefreshing(true);
+
+    try {
+      await getSurprises();
+      dispatch(setSelectedSurprise(null));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -160,66 +177,87 @@ export default function SurprisesScreen({ navigation }) {
     }
   }, [selectedSurprise]);
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollView}
-      >
-        <Text style={styles.title}>
-          {unlockedSurprisesCount} / {surprises.length} surprises débloquées !
-        </Text>
-
-        {selectedSurprise ? (
-          <Animated.View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              opacity: fadeAnim,
-              transform: [{ translateY }],
-            }}
-          >
-            <SurpriseCard
-              key={selectedSurprise._id}
-              surprise={selectedSurprise}
-              handleRiddleAnswer={handleRiddleAnswer}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container} pointerEvents="box-none">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          bounces={true}
+          alwaysBounceVertical={true}
+          overScrollMode="always"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                console.log("----Refresh lancé !----");
+                onRefresh();
+              }}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
             />
-            <Pressable
-              style={styles.backBtn}
-              onPress={() => dispatch(setSelectedSurprise(null))}
-            >
-              <Text style={styles.backBtnText}>← Retour</Text>
-            </Pressable>
-          </Animated.View>
-        ) : (
-          <View style={styles.miniCardsContainer}>{surpriseMiniCards}</View>
-        )}
-      </ScrollView>
-    </View>
+          }
+        >
+          {isLoading && !refreshing ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : (
+            <>
+              <Text style={styles.title}>
+                {unlockedSurprisesCount} / {surprises.length} surprises
+                débloquées !
+              </Text>
+
+              {selectedSurprise ? (
+                <Animated.View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    opacity: fadeAnim,
+                    transform: [{ translateY }],
+                  }}
+                >
+                  <SurpriseCard
+                    key={selectedSurprise._id}
+                    surprise={selectedSurprise}
+                    handleRiddleAnswer={handleRiddleAnswer}
+                  />
+                  <Pressable
+                    style={styles.backBtn}
+                    onPress={() => dispatch(setSelectedSurprise(null))}
+                  >
+                    <Text style={styles.backBtnText}>← Retour</Text>
+                  </Pressable>
+                </Animated.View>
+              ) : (
+                <View style={styles.miniCardsContainer}>
+                  {surpriseMiniCards}
+                </View>
+              )}
+            </>
+          )}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
     backgroundColor: colors.backgroundLight,
   },
-  scrollView: {
-    display: "flex",
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     alignItems: "center",
-    marginBottom: 40,
+    paddingBottom: 40,
+    minHeight: screenHeight * 3,
+  },
+  scrollView: {
+    zIndex: 10,
+    flex: 1,
+    width: "100%",
   },
   title: {
     color: colors.white,

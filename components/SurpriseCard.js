@@ -43,6 +43,49 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
 
   const date = new Date(surprise.revealAt);
 
+  //   const sendUnlockNotification = async () => {
+  //   setIsLoading(true);
+
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({
+  //           tokenList: tempTokenList,
+  //           title: "🎁 NOUVELLE SURPRISE DÉBLOQUÉE 🎁",
+  //           body: "Il va se passer quelque chose...",
+  //           url: "/",
+  //         }),
+  //       },
+  //     );
+  //     const data = await response.json();
+  //     showMessage({
+  //       message: data.message,
+  //       type: "success",
+  //       backgroundColor: colors.primary,
+  //       color: colors.white,
+  //       style: {
+  //         borderRadius: 10,
+  //         marginBottom: 15,
+  //       },
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //     showMessage({
+  //       message: data.message || "Problème de connexion BDD",
+  //       type: "error",
+  //       style: {
+  //         borderRadius: 10,
+  //         marginBottom: 15,
+  //       },
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const unlockTimeSurprise = async (surpriseId) => {
     try {
       const response = await fetch(
@@ -63,7 +106,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
           color: colors.white,
           style: {
             borderRadius: 10,
-            width: screenWidth * 0.7,
+            width: screenWidth,
           },
         });
         setAnswerInput(null);
@@ -133,9 +176,14 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
             <TextInput
               style={styles.input}
               placeholder="Réponse"
-              type="text"
+              placeholderTextColor={colors.lightGray}
+              KeyboardType="default"
+              returnKeyType="done"
               value={answerInput}
               onChangeText={setAnswerInput}
+              onSubmitEditing={() =>
+                handleRiddleAnswer(surprise._id, answerInput)
+              }
             ></TextInput>
             <TouchableOpacity
               style={styles.button}
@@ -187,7 +235,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
           color: colors.white,
           style: {
             borderRadius: 10,
-            width: screenWidth * 0.7,
+            width: screenWidth,
           },
         });
       }
@@ -217,7 +265,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
           color: colors.white,
           style: {
             borderRadius: 10,
-            width: screenWidth * 0.7,
+            width: screenWidth,
           },
         });
       }
@@ -306,6 +354,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "80%",
     color: colors.muted,
+    fontSize: 16,
   },
   button: {
     backgroundColor: colors.primaryLight,

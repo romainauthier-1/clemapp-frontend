@@ -122,7 +122,7 @@ export default function EventScreen() {
             tokenList: tempTokenList,
             title: notifTitle,
             body: notifBody,
-            url: "/Surprises",
+            url: "/",
           }),
         },
       );
@@ -148,6 +148,9 @@ export default function EventScreen() {
         },
       });
     } finally {
+      setNotifBody(null);
+      setNotifTitle(null);
+      setTempTokenList([]);
       setIsLoading(false);
     }
   };
@@ -165,7 +168,7 @@ export default function EventScreen() {
             tokenList: tempTokenList,
             title: "🚨 FIL ROUGE 🚨",
             body: "👯 Rejoins Clémence de suite !",
-            url: "/Surprises",
+            url: "/",
           }),
         },
       );

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 import { colors } from "./colors";
+import { Eye, EyeOff } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const screenHeight = Dimensions.get("window").height;
@@ -20,6 +21,7 @@ const screenHeight = Dimensions.get("window").height;
 export default function LoginScreen({ navigation }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [focus, setFocus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +36,10 @@ export default function LoginScreen({ navigation }) {
       return false;
     }
     return true;
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleLogin = async () => {
@@ -103,7 +109,7 @@ export default function LoginScreen({ navigation }) {
                 placeholderTextColor={colors.lightGray}
                 value={name}
                 onChangeText={setName}
-                keyboardType="text"
+                keyboardType="default"
                 autoCapitalize="words"
                 onFocus={() => setFocus("name")}
                 onBlur={() => setFocus(null)}
@@ -112,19 +118,29 @@ export default function LoginScreen({ navigation }) {
             <View style={{ marginBottom: 24 }} />
             <View>
               <Text style={styles.label}>Mot de passe</Text>
-
-              <TextInput
-                style={styles.input}
-                placeholder="************"
-                placeholderTextColor={colors.lightGray}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                returnKeyType="done"
-                onSubmitEditing={handleLogin}
-                onFocus={() => setFocus("password")}
-                onBlur={() => setFocus(null)}
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordText}
+                  placeholder="************"
+                  placeholderTextColor={colors.lightGray}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!isPasswordVisible}
+                  returnKeyType="done"
+                  onSubmitEditing={handleLogin}
+                  onFocus={() => setFocus("password")}
+                  onBlur={() => setFocus(null)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <Pressable onPress={togglePasswordVisibility}>
+                  {isPasswordVisible ? (
+                    <EyeOff size={20} color={colors.lightGray} />
+                  ) : (
+                    <Eye size={20} color={colors.lightGray} />
+                  )}
+                </Pressable>
+              </View>
             </View>
             {errorMessage !== "" && (
               <Text style={styles.errorText}>{errorMessage}</Text>
@@ -217,5 +233,26 @@ const styles = StyleSheet.create({
     color: colors.lightGray,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    color: colors.white,
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.lightGray,
+    borderWidth: 1,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    fontSize: 16,
+  },
+  passwordText: {
+    color: colors.white,
+    flex: 1,
   },
 });

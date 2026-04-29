@@ -21,7 +21,7 @@ import {
   setSelectedSurprise,
 } from "../reducers/surprises";
 import { useIsFocused } from "@react-navigation/native";
-import { Lock, LockOpen } from "lucide-react-native";
+import { Lock, LockOpen, BadgeQuestionMark } from "lucide-react-native";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { colors } from "./colors";
 import SurpriseCard from "../components/SurpriseCard";
@@ -137,6 +137,11 @@ export default function SurprisesScreen({ navigation }) {
           surprise={surprise}
           onPress={() => dispatch(setSelectedSurprise(surprise))}
         >
+          {surprise.revealMode === "riddle" && !surprise.isUnlocked && (
+            <View style={styles.badge}>
+              <BadgeQuestionMark size={22} color={colors.white} />
+            </View>
+          )}
           <Text style={styles.miniCardsText}>{index + 1}</Text>
           <View style={styles.iconContainer}>
             {surprise.isUnlocked ? (
@@ -309,5 +314,12 @@ const styles = StyleSheet.create({
   backBtnText: {
     color: colors.white,
     fontWeight: "bold",
+  },
+  badge: {
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    position: "absolute",
+    top: -5,
+    right: -5,
   },
 });

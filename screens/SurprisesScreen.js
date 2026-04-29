@@ -31,8 +31,13 @@ export default function SurprisesScreen({ navigation }) {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const surprises = useSelector((state) => state.surprises.surprises);
-  const selectedSurprise = useSelector(
-    (state) => state.surprises.selectedSurprise,
+  const selectedSurpriseId = useSelector(
+    (state) => state.surprises.selectedSurprise?._id,
+  );
+  const selectedSurprise = useSelector((state) =>
+    state.surprises.surprises.find(
+      (surprise) => surprise._id === selectedSurpriseId,
+    ),
   );
   const [isLoading, setIsLoading] = useState(false);
 

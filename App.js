@@ -49,6 +49,14 @@ const Stack = createNativeStackNavigator();
 
 const HomeTabs = ({ onActivatePush }) => {
   const user = useSelector((state) => state.user);
+
+  const surprises = useSelector((state) => state.surprises.surprises);
+  const filRouge = surprises?.find((s) => s._id === "69f1085e6f69559a159d7c87");
+
+  const canAccessFilRouge =
+    user.status === "guest+" ||
+    (user.status === "star" && filRouge?.isUnlocked === true);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -123,7 +131,7 @@ const HomeTabs = ({ onActivatePush }) => {
           },
         }}
       />
-      {(user.status === "star" || user.status === "guest+") && (
+      {canAccessFilRouge && (
         <Tab.Screen
           name="Fil Rouge"
           component={EventScreen}
@@ -289,10 +297,3 @@ export default function App({ navigation }) {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundLight,
-  },
-});

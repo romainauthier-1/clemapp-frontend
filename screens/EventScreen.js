@@ -232,6 +232,8 @@ export default function EventScreen() {
                 placeholder="Contenu de la notif'"
                 placeholderTextColor={colors.lightGray}
                 onChangeText={setNotifBody}
+                returnKeyType="done"
+                onSubmitEditing={sendNotification}
                 autoCapitalize="sentences"
                 multiline={true}
               ></TextInput>
@@ -331,7 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 10,
-    fontSize: 14,
+    fontSize: 16,
   },
   // Boutons d'action principaux
   mainButton: {

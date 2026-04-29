@@ -7,7 +7,7 @@ import { colors, wheelColors } from "../screens/colors";
 
 export default function WheelSvg({ guests, size }) {
   const radius = size / 2;
-  const anglePerSegment = 360 / guests.length;
+  const anglePerSegment = 360 / guests?.length;
 
   // Fonction pour générer le chemin (Path) d'un segment
   const createArc = (index) => {
@@ -34,7 +34,7 @@ export default function WheelSvg({ guests, size }) {
   return (
     <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <G>
-        {guests.map((name, index) => (
+        {guests?.map((guest, index) => (
           <G key={index}>
             {/* 1. Le Segment Coloré */}
             <Path
@@ -72,7 +72,7 @@ export default function WheelSvg({ guests, size }) {
               alignmentBaseline="middle" // Centre verticalement
               transform={`rotate(${index * anglePerSegment + anglePerSegment / 2} ${radius + (radius / 1.5) * Math.cos(((index * anglePerSegment + anglePerSegment / 2) * Math.PI) / 180)} ${radius + (radius / 1.5) * Math.sin(((index * anglePerSegment + anglePerSegment / 2) * Math.PI) / 180)})`}
             >
-              {name}
+              {guest.name[0].toUpperCase() + guest.name.slice(1).toLowerCase()}
             </SvgText>
           </G>
         ))}

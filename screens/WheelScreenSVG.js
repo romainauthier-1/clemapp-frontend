@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,56 @@ import {
 import { ArrowBigDown } from "lucide-react-native";
 import { colors, wheelColors } from "./colors";
 import WheelSvg from "../components/WheelSvg";
+import { useSelector, useDispatch } from "react-redux";
+import { setUserList } from "../reducers/user";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default function WheelScreen() {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const guests1 = useSelector((state) => state.user.userList);
+  const guests2 =
+    guests1?.filter(
+      (guest) => guest.name !== "maxime" && guest.name !== "alicia",
+    ) || [];
+
+  const surprises = useSelector((state) => state.surprises.surprises);
+  const maxAlicia = surprises?.find(
+    (s) => s._id === "69f132071b177b619c841871",
+  );
+
+  const guestsList = (maxAlicia?.isUnlocked ? guests1 : guests2) || [];
+
+  const getAllUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/all`,
+      );
+      const data = await response.json();
+      dispatch(setUserList(data.allUsers));
+      return data;
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "warning",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (guests1.length === 0) {
+      getAllUsers();
+    }
+  }, []);
+
   const rotation = useRef(new Animated.Value(0)).current;
 
   const spin = rotation.interpolate({
@@ -40,29 +88,13 @@ export default function WheelScreen() {
 
       const progress = wheelSpin % 1;
       const angleFinal = progress * 360 + 90;
-      const segmentSize = 360 / guests.length;
+      const segmentSize = 360 / guestsList.length;
       const adjustedAngle = (360 - angleFinal + 360) % 360;
       const winnerIndex = Math.floor(adjustedAngle / segmentSize);
 
-      setWinner(guests[winnerIndex]);
+      setWinner(guestsList[winnerIndex]);
     });
   };
-
-  const guests = [
-    "Clémence",
-    "Kévin <3",
-    "Manon",
-    "Baptiste",
-    "Romain",
-    "Kévin",
-    "Élise",
-    "Tim",
-    "Valentin",
-    "Johanna",
-    "Julien",
-    "Cédric",
-    "Loriana",
-  ];
 
   return (
     <View style={styles.container}>
@@ -76,13 +108,18 @@ export default function WheelScreen() {
       <Animated.View
         style={[styles.wheelContainer, { transform: [{ rotate: spin }] }]}
       >
-        <WheelSvg guests={guests} size={300} />
+        <WheelSvg guests={guestsList} size={300} />
       </Animated.View>
 
       <Pressable style={styles.button} onPress={() => spinWheel()}>
         <Text style={styles.buttonText}>Tourner la roue</Text>
       </Pressable>
-      {winner && <Text style={styles.winnerText}> Bravo {winner} ! 🎉</Text>}
+      {winner && (
+        <Text style={styles.winnerText}>
+          {" "}
+          Bravo {winner.name[0].toUpperCase() + winner.name.slice(1)} ! 🎉
+        </Text>
+      )}
     </View>
   );
 }

@@ -15,7 +15,10 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import { colors } from "./colors";
 
 export default function EventScreen() {
-  const userList = useSelector((state) => state.user.userList);
+  const guests1 = useSelector((state) => state.user.userList);
+  const guests2 = guests1?.filter(
+    (guest) => guest.name !== "maxime" && guest.name !== "alicia",
+  );
   const isNotifActive = useSelector((state) => state.user.notifActivated);
   const [tempUserList, setTempUserList] = useState([]);
   const [tempTokenList, setTempTokenList] = useState([]);
@@ -54,7 +57,14 @@ export default function EventScreen() {
     setTempUserList([]);
   }, []);
 
-  const userListToDisplay = userList?.map((user, index) => {
+  const surprises = useSelector((state) => state.surprises.surprises);
+  const maxAlicia = surprises?.find(
+    (s) => s._id === "69f132071b177b619c841871",
+  );
+
+  const guestsList = maxAlicia?.isUnlocked ? guests1 : guests2;
+
+  const userListToDisplay = guestsList?.map((user, index) => {
     const isSelected = tempTokenList.includes(user.token);
     if (tokenInRedux === user.token) {
       return;

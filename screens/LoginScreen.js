@@ -100,6 +100,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder="Alexandre"
+                placeholderTextColor={colors.lightGray}
                 value={name}
                 onChangeText={setName}
                 keyboardType="text"
@@ -115,9 +116,12 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder="************"
+                placeholderTextColor={colors.lightGray}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
+                returnKeyType="done"
+                onSubmitEditing={handleLogin}
                 onFocus={() => setFocus("password")}
                 onBlur={() => setFocus(null)}
               />
@@ -198,6 +202,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     borderRadius: 8,
     marginBottom: 8,
+    fontSize: 16,
   },
   errorText: {
     color: colors.destructive,

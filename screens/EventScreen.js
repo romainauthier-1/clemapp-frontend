@@ -222,6 +222,7 @@ export default function EventScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Titre de la notif'"
+                placeholderTextColor={colors.lightGray}
                 value={notifTitle}
                 onChangeText={setNotifTitle}
                 autoCapitalize="sentences"
@@ -229,7 +230,7 @@ export default function EventScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Contenu de la notif'"
-                value={notifBody}
+                placeholderTextColor={colors.lightGray}
                 onChangeText={setNotifBody}
                 autoCapitalize="sentences"
                 multiline={true}

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   surprises: [],
+  selectedSurprise: null,
 };
 
 const surprisesSlice = createSlice({
@@ -29,9 +30,16 @@ const surprisesSlice = createSlice({
         surpriseToLock.isUnlocked = false;
       }
     },
+    setSelectedSurprise: (state, action) => {
+      state.selectedSurprise = action.payload;
+    },
   },
 });
 
-export const { setSurprises, unlockSurprise, lockSurprise } =
-  surprisesSlice.actions;
+export const {
+  setSurprises,
+  unlockSurprise,
+  lockSurprise,
+  setSelectedSurprise,
+} = surprisesSlice.actions;
 export default surprisesSlice.reducer;

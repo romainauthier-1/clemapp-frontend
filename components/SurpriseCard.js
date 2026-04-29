@@ -31,11 +31,14 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
   const [answerInput, setAnswerInput] = useState(null);
   const user = useSelector((state) => state.user);
 
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const dateOptions = {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: userTimeZone,
   };
 
   const date = new Date(surprise.revealAt);
@@ -244,20 +247,21 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
           })}
         </Text>
         <Text style={styles.description}>
-          {surprise.notes !== ""
-            ? surprise.notes
-            : "Pas de notes pour cette surprise"}
+          Organisé par :{" "}
+          {surprise.organizedBy.name[0].toUpperCase() +
+            surprise.organizedBy.name.slice(1)}
         </Text>
-        {user.status === "guest+" &&
-          surprise.revealMode === "manual" &&
-          !surprise.isUnlocked && (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleManualUnlock(surprise._id)}
-            >
-              <Text style={styles.text}>Débloquer la surprise</Text>
-            </TouchableOpacity>
-          )}
+        <Text style={styles.description}>
+          {surprise.notes ? surprise.notes : "---"}
+        </Text>
+        {user.status === "guest+" && !surprise.isUnlocked && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleManualUnlock(surprise._id)}
+          >
+            <Text style={styles.text}>Débloquer la surprise</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -286,7 +290,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     width: screenWidth * 0.8,
-    height: screenHeight * 0.3,
+    height: screenHeight * 0.7,
     marginTop: 20,
     marginBottom: 20,
     display: "flex",

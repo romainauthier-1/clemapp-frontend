@@ -153,8 +153,8 @@ export default function EventScreen() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             tokenList: tempTokenList,
-            title: "FIL ROUGE",
-            body: "Rejoins Clémence de suite !",
+            title: "🚨 FIL ROUGE 🚨",
+            body: "👯 Rejoins Clémence de suite !",
             url: "/Surprises",
           }),
         },

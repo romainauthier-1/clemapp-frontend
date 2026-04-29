@@ -251,7 +251,7 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
           {surprise.organizedBy.name[0].toUpperCase() +
             surprise.organizedBy.name.slice(1)}
         </Text>
-        <Text style={styles.description}>
+        <Text style={styles.description2}>
           {surprise.notes ? surprise.notes : "---"}
         </Text>
         {user.status === "guest+" && !surprise.isUnlocked && (
@@ -324,5 +324,11 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     textAlign: "center",
+  },
+  description2: {
+    color: colors.white,
+    fontSize: 14,
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });

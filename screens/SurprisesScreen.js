@@ -175,7 +175,12 @@ export default function SurprisesScreen({ navigation }) {
 
         {selectedSurprise ? (
           <Animated.View
-            style={{ opacity: fadeAnim, transform: [{ translateY }] }}
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: fadeAnim,
+              transform: [{ translateY }],
+            }}
           >
             <SurpriseCard
               key={selectedSurprise._id}

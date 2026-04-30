@@ -75,6 +75,67 @@ export default function WheelScreen() {
   });
 
   const [winner, setWinner] = useState(null);
+  const sendLinusNotification = async (newLinus, exLinus) => {
+    setIsLoading(true);
+    try {
+      // Envoi notif new Linus
+      const responseNew = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tokenList: newLinus.token,
+            title: "🛎 NEW LINUS ",
+            body: "Tu as été désigné.e ! À ton tour de prendre soin de Clémence ❤️",
+            url: "/",
+          }),
+        },
+      );
+      const dataNew = await responseNew.json();
+
+      // Envoi notif ancien Linus
+      const responseEx = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tokenList: exLinus.token,
+            title: "🔕 REPOS SOLDAT ",
+            body: "Tu as passé le relais, tu n'es plus Linus ❤️",
+            url: "/",
+          }),
+        },
+      );
+      const dataEx = await responseEx.json();
+
+      if (dataNew.result && dataEx.result) {
+        showMessage({
+          message: "Passage de relais effectué !",
+          type: "success",
+          backgroundColor: colors.primary,
+          color: colors.white,
+          style: {
+            borderRadius: 10,
+            marginBottom: 15,
+          },
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "error",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const changeLinus = async (token) => {
     setIsLoading(true);
@@ -91,6 +152,7 @@ export default function WheelScreen() {
 
       if (data.result) {
         dispatch(changeLinusStore(data.newLinus));
+        sendLinusNotification(data.newLinus, data.exLinus);
       }
     } catch (err) {
       console.error(err);

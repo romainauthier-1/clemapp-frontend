@@ -17,6 +17,7 @@ import {
   unlockSurprise,
   lockSurprise,
 } from "../reducers/surprises";
+import { useIsFocused } from "@react-navigation/native";
 import { Lock, LockOpen } from "lucide-react-native";
 import { colors } from "../screens/colors";
 import { showMessage, hideMessage } from "react-native-flash-message";
@@ -24,8 +25,13 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 
-export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
+export default function SurpriseCard({
+  surprise,
+  handleRiddleAnswer,
+  sendNotification,
+}) {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const [viewRiddle, setViewRiddle] = useState(false);
   const [viewHint, setViewHint] = useState(false);
   const [answerInput, setAnswerInput] = useState(null);
@@ -42,96 +48,6 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
   };
 
   const date = new Date(surprise.revealAt);
-
-  //   const sendUnlockNotification = async () => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
-  //       {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({
-  //           tokenList: tempTokenList,
-  //           title: "🎁 NOUVELLE SURPRISE DÉBLOQUÉE 🎁",
-  //           body: "Il va se passer quelque chose...",
-  //           url: "/",
-  //         }),
-  //       },
-  //     );
-  //     const data = await response.json();
-  //     showMessage({
-  //       message: data.message,
-  //       type: "success",
-  //       backgroundColor: colors.primary,
-  //       color: colors.white,
-  //       style: {
-  //         borderRadius: 10,
-  //         marginBottom: 15,
-  //       },
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //     showMessage({
-  //       message: data.message || "Problème de connexion BDD",
-  //       type: "error",
-  //       style: {
-  //         borderRadius: 10,
-  //         marginBottom: 15,
-  //       },
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  const unlockTimeSurprise = async (surpriseId) => {
-    try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/unlock/${surpriseId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-      const data = await response.json();
-
-      if (data.result) {
-        dispatch(unlockSurprise(surpriseId));
-        showMessage({
-          message: data.message || "Surprise débloquée !",
-          type: "success",
-          backgroundColor: colors.background,
-          color: colors.white,
-          style: {
-            borderRadius: 10,
-            width: screenWidth,
-          },
-        });
-        setAnswerInput(null);
-      }
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  useEffect(() => {
-    if (surprise.revealMode === "time" && !surprise.isUnlocked) {
-      const now = new Date().getTime();
-      const surpriseTime = new Date(surprise.revealAt).getTime();
-      const timeUntilReveal = surpriseTime - now;
-
-      if (timeUntilReveal < 0) {
-        unlockTimeSurprise(surprise._id);
-      } else {
-        const timer = setTimeout(() => {
-          unlockTimeSurprise(surprise._id);
-        }, timeUntilReveal);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [surprise.revealAt, surprise.isUnlocked]);
 
   const unlockedSurpriseCard = () => {
     return (
@@ -227,6 +143,10 @@ export default function SurpriseCard({ surprise, handleRiddleAnswer }) {
       const data = await response.json();
 
       if (data.result) {
+        sendNotification(
+          "🎁 Surprise débloquée !",
+          data.unlockedSurprise.title,
+        );
         dispatch(unlockSurprise(surpriseId));
         showMessage({
           message: data.message || "Surprise débloquée !",

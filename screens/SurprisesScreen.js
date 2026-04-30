@@ -20,6 +20,7 @@ import {
   unlockSurprise,
   setSelectedSurprise,
 } from "../reducers/surprises";
+import { setUserList } from "../reducers/user";
 import { useIsFocused } from "@react-navigation/native";
 import { Lock, LockOpen, BadgeQuestionMark } from "lucide-react-native";
 import { showMessage, hideMessage } from "react-native-flash-message";
@@ -33,6 +34,7 @@ export default function SurprisesScreen({ navigation }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
+  const guestsList = useSelector((state) => state.user.userList);
   const surprises = useSelector((state) => state.surprises.surprises);
   const selectedSurpriseId = useSelector(
     (state) => state.surprises.selectedSurprise?._id,
@@ -64,6 +66,30 @@ export default function SurprisesScreen({ navigation }) {
     }
   };
 
+  const getAllUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/all`,
+      );
+      const data = await response.json();
+      dispatch(setUserList(data.allUsers));
+      return data;
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "warning",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onRefresh = async () => {
     console.log("------ Début du refresh ------");
     setRefreshing(true);
@@ -81,7 +107,103 @@ export default function SurprisesScreen({ navigation }) {
   useEffect(() => {
     isFocused && getSurprises();
     dispatch(setSelectedSurprise(null));
+
+    if (guestsList.length === 0) {
+      getAllUsers();
+    }
   }, [isFocused]);
+
+  const unlockTimeSurprise = async (surpriseId) => {
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/unlock/${surpriseId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      const data = await response.json();
+
+      if (data.result) {
+        sendNotification(
+          "🎁 Surprise débloquée !",
+          data.unlockedSurprise.title,
+        );
+        dispatch(unlockSurprise(surpriseId));
+        showMessage({
+          message: data.message || "Surprise débloquée !",
+          type: "success",
+          backgroundColor: colors.background,
+          color: colors.white,
+          style: {
+            borderRadius: 10,
+            width: screenWidth,
+          },
+        });
+        setAnswerInput(null);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (!surprises || surprises.length === 0) return;
+
+    const timers = surprises
+      .filter(
+        (surprise) => surprise.revealMode === "time" && !surprise.isUnlocked,
+      )
+      .map((surprise) => {
+        const now = new Date().getTime();
+        const timeUntilReveal = new Date(surprise.revealAt).getTime() - now;
+
+        if (timeUntilReveal < 0) {
+          unlockTimeSurprise(surprise._id);
+        } else {
+          return setTimeout(() => {
+            unlockTimeSurprise(surprise._id);
+          }, timeUntilReveal);
+        }
+      });
+
+    return () => timers.forEach((timer) => timer && clearTimeout(timer));
+  }, [isFocused]);
+
+  const fullTokenList = guestsList?.map((user) => user.token);
+
+  const sendNotification = async (title, body) => {
+    console.log("TokenList :", fullTokenList);
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tokenList: fullTokenList,
+            title: title,
+            body: body,
+            url: "/",
+          }),
+        },
+      );
+      await response.json();
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "error",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleRiddleAnswer = async (surpriseId, answer) => {
     try {
@@ -96,6 +218,10 @@ export default function SurprisesScreen({ navigation }) {
       const data = await response.json();
 
       if (data.result) {
+        sendNotification(
+          "🎁 Surprise débloquée !",
+          data.unlockedSurprise.title,
+        );
         dispatch(unlockSurprise(surpriseId));
         showMessage({
           message: data.message || "Bravo, bonne réponse !",
@@ -226,6 +352,7 @@ export default function SurprisesScreen({ navigation }) {
                     key={selectedSurprise._id}
                     surprise={selectedSurprise}
                     handleRiddleAnswer={handleRiddleAnswer}
+                    sendNotification={sendNotification}
                   />
                   <Pressable
                     style={styles.backBtn}

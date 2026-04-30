@@ -7,6 +7,7 @@ const initialState = {
   isConnected: false,
   notifActivated: false,
   userList: [],
+  linus: null,
 };
 
 const userSlice = createSlice({
@@ -19,6 +20,7 @@ const userSlice = createSlice({
       state.status = action.payload.status;
       state.isConnected = true;
       state.notifActivated = action.payload.subscription;
+      state.linus = action.payload.linus;
     },
     logout: (state) => {
       state.name = null;
@@ -27,6 +29,7 @@ const userSlice = createSlice({
       state.isConnected = false;
       state.notifActivated = false;
       state.userList = [];
+      state.linus = null;
     },
     activateNotif: (state, action) => {
       state.notifActivated = action.payload;
@@ -34,8 +37,12 @@ const userSlice = createSlice({
     setUserList: (state, action) => {
       state.userList = action.payload;
     },
+    changeLinusStore: (state, action) => {
+      state.linus = action.payload;
+    },
   },
 });
 
-export const { login, logout, activateNotif, setUserList } = userSlice.actions;
+export const { login, logout, activateNotif, setUserList, changeLinusStore } =
+  userSlice.actions;
 export default userSlice.reducer;

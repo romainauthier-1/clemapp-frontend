@@ -12,13 +12,15 @@ import { ArrowBigDown, Martini, LoaderPinwheel } from "lucide-react-native";
 import { colors, wheelColors } from "./colors";
 import WheelSvg from "../components/WheelSvg";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserList } from "../reducers/user";
+import { setUserList, changeLinusStore } from "../reducers/user";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default function WheelScreen() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const isClem = user.token === "nMfy7Fe8hQ5iE6LXY8RPJ_Okl9VKUaL0";
+  const linus = useSelector((state) => state.user.linus);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectingLinus, setSelectingLinus] = useState(false);
   const [isLinus, setIsLinus] = useState(null);
   const guests1 = useSelector((state) => state.user.userList);
   const guests2 =
@@ -72,6 +74,36 @@ export default function WheelScreen() {
 
   const [winner, setWinner] = useState(null);
 
+  const changeLinus = async (token) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/changeLinus`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        },
+      );
+      const data = await response.json();
+
+      if (data.result) {
+        dispatch(changeLinusStore(data.newLinus));
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "warning",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const spinWheel = (linus = false) => {
     setWinner(null);
     setIsLinus(null);
@@ -102,17 +134,21 @@ export default function WheelScreen() {
         ) {
           spinWheel(true);
         } else {
+          changeLinus(guestsList[winnerIndex].token);
           setIsLinus(guestsList[winnerIndex]);
         }
         return;
       } else {
         setWinner(guestsList[winnerIndex]);
       }
-      // linus
-      //   ? setIsLinus(guestsList[winnerIndex])
-      //   : setWinner(guestsList[winnerIndex]);
     });
   };
+
+  const linusSurprise = surprises?.find(
+    (s) => s._id === "69f10cf39507471203ed993a",
+  );
+
+  const canAccessLinus = linusSurprise?.isUnlocked;
 
   return (
     <View style={styles.container}>
@@ -130,7 +166,10 @@ export default function WheelScreen() {
       </Animated.View>
       <View style={styles.btnContainer}>
         <Pressable
-          style={styles.button}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.buttonPressed,
+          ]}
           onPress={() => {
             spinWheel(false);
           }}
@@ -138,15 +177,20 @@ export default function WheelScreen() {
           <Text style={styles.buttonText}>Tourner la roue</Text>
           <LoaderPinwheel color={colors.white} size={40} />
         </Pressable>
-        <Pressable
-          style={styles.button}
-          onPress={() => {
-            spinWheel(true);
-          }}
-        >
-          <Text style={styles.buttonText}>Choisir Linus</Text>
-          <Martini color={colors.white} size={40} />
-        </Pressable>
+        {canAccessLinus && isClem && (
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={() => {
+              spinWheel(true);
+            }}
+          >
+            <Text style={styles.buttonText}>Choisir Linus</Text>
+            <Martini color={colors.white} size={40} />
+          </Pressable>
+        )}
       </View>
       {winner && (
         <Text style={styles.winnerText}>
@@ -190,6 +234,10 @@ const styles = StyleSheet.create({
     width: 150,
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }],
   },
   buttonText: {
     color: colors.white,

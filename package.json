@@ -16,6 +16,7 @@
     "@react-navigation/native": "6",
     "@react-navigation/native-stack": "6",
     "@reduxjs/toolkit": "^2.11.2",
+    "cors": "^2.8.6",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
     "expo-updates": "~29.0.16",

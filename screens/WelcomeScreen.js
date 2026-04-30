@@ -12,6 +12,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSurprises, unlockSurprise } from "../reducers/surprises";
@@ -23,6 +24,7 @@ const screenWidth = Dimensions.get("window").width;
 
 export default function WelcomeScreen({ navigation }) {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const user = useSelector((state) => state.user);
   const [quote, setQuote] = useState(null);
   const [weatherInfos, setWeatherInfos] = useState(null);
@@ -56,11 +58,6 @@ export default function WelcomeScreen({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    getRandomCitation();
-    getWeather();
-  }, []);
-
   const weatherForecastToDisplay = weatherForecast?.map((item, index) => {
     const weatherIcon = `https://openweathermap.org/img/wn/${item.icon}@2x.png`;
     return (
@@ -75,6 +72,46 @@ export default function WelcomeScreen({ navigation }) {
       </View>
     );
   });
+
+  const [isLinusUnlocked, setIsLinusUnlocked] = useState(false);
+  const currentLinus = user.linus?.name;
+
+  const checkLinusUnlocked = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/isUnlocked/69f10cf39507471203ed993a`,
+      );
+      const data = await response.json();
+      setIsLinusUnlocked(data.isUnlocked);
+    } catch (err) {
+      console.error(err.message);
+      return;
+    }
+  };
+
+  const checkLinusPerson = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/linus`,
+      );
+      const data = await response.json();
+      if (data.result) {
+        dispatch(changeLinusStore(data.linus));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    getRandomCitation();
+    getWeather();
+  }, []);
+
+  useEffect(() => {
+    checkLinusUnlocked();
+    checkLinusPerson();
+  }, [isFocused]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -90,6 +127,13 @@ export default function WelcomeScreen({ navigation }) {
             <Text style={styles.citationLink}>En savoir plus</Text>
           </Pressable>
         </View>
+      )}
+      {currentLinus && isLinusUnlocked ? (
+        <Text style={styles.linusText}>
+          {currentLinus[0].toUpperCase() + currentLinus.slice(1)} est Linus ! 🍹
+        </Text>
+      ) : (
+        <Text style={styles.linusText}>Rien de ouf ici (pour l'instant) !</Text>
       )}
       {!weatherInfos || !weatherForecast ? (
         <ActivityIndicator size="large" color={colors.primary} />
@@ -140,6 +184,15 @@ const styles = StyleSheet.create({
     textAlign: "justify",
     fontStyle: "italic",
     padding: 10,
+  },
+  linusText: {
+    color: colors.white,
+    backgroundColor: colors.background,
+    borderRadius: 25,
+    fontSize: 24,
+    textAlign: "center",
+    padding: 15,
+    width: screenWidth * 0.7,
   },
   citationAuthor: {
     color: colors.white,

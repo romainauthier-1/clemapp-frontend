@@ -65,6 +65,7 @@ export default function LoginScreen({ navigation }) {
             token: data.foundUser.token,
             status: data.foundUser.status,
             subscription: data.foundUser.subscription ? true : false,
+            linus: data.linus,
           }),
         );
       } else {

@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     paddingBottom: 40,
-    minHeight: screenHeight * 3,
+    minHeight: screenHeight * 1.05,
   },
   scrollView: {
     zIndex: 10,

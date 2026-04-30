@@ -52,6 +52,8 @@ export default function EventScreen() {
     }
   };
 
+  const fullTokenList = guests1?.map((user) => user.token);
+
   useEffect(() => {
     getAllUsers();
     setTempUserList([]);
@@ -165,7 +167,7 @@ export default function EventScreen() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            tokenList: tempTokenList,
+            tokenList: fullTokenList,
             title: "🚨 FIL ROUGE 🚨",
             body: "👯 Rejoins Clémence de suite !",
             url: "/",

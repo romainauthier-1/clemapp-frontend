@@ -223,17 +223,7 @@ export default function EventScreen() {
 
           <View>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Envoyer une notification personnalisée
-              </Text>
-              <Text style={styles.sectionTitle}>
-                Destinataires ({tempTokenList.length})
-              </Text>
-              <View style={styles.listContainer}>{userListToDisplay}</View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Message personnalisé</Text>
+              <Text style={styles.sectionTitle}>Notif personnalisée</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Titre de la notif'"
@@ -252,6 +242,12 @@ export default function EventScreen() {
                 autoCapitalize="sentences"
                 multiline={true}
               ></TextInput>
+            </View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                Destinataires ({tempTokenList.length})
+              </Text>
+              <View style={styles.listContainer}>{userListToDisplay}</View>
               <Pressable
                 disabled={!canSend}
                 onPress={sendNotification}

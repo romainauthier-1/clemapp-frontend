@@ -8,7 +8,7 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
-import { ArrowBigDown } from "lucide-react-native";
+import { ArrowBigDown, Martini, LoaderPinwheel } from "lucide-react-native";
 import { colors, wheelColors } from "./colors";
 import WheelSvg from "../components/WheelSvg";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +18,8 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 export default function WheelScreen() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectingLinus, setSelectingLinus] = useState(false);
+  const [isLinus, setIsLinus] = useState(null);
   const guests1 = useSelector((state) => state.user.userList);
   const guests2 =
     guests1?.filter(
@@ -70,8 +72,9 @@ export default function WheelScreen() {
 
   const [winner, setWinner] = useState(null);
 
-  const spinWheel = () => {
+  const spinWheel = (linus = false) => {
     setWinner(null);
+    setIsLinus(null);
     rotation.setValue(0);
 
     const wheelSpin = 5 + Math.random();
@@ -91,8 +94,9 @@ export default function WheelScreen() {
       const segmentSize = 360 / guestsList.length;
       const adjustedAngle = (360 - angleFinal + 360) % 360;
       const winnerIndex = Math.floor(adjustedAngle / segmentSize);
-
-      setWinner(guestsList[winnerIndex]);
+      linus
+        ? setIsLinus(guestsList[winnerIndex])
+        : setWinner(guestsList[winnerIndex]);
     });
   };
 
@@ -101,7 +105,7 @@ export default function WheelScreen() {
       {/* <View style={styles.pointer} /> */}
 
       <ArrowBigDown
-        style={{ position: "absolute", top: "12%", zIndex: 1 }}
+        style={{ position: "absolute", top: "9%", zIndex: 1 }}
         color={colors.secondary}
         size={30}
       />
@@ -110,14 +114,36 @@ export default function WheelScreen() {
       >
         <WheelSvg guests={guestsList} size={300} />
       </Animated.View>
-
-      <Pressable style={styles.button} onPress={() => spinWheel()}>
-        <Text style={styles.buttonText}>Tourner la roue</Text>
-      </Pressable>
+      <View style={styles.btnContainer}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            spinWheel(false);
+          }}
+        >
+          <Text style={styles.buttonText}>Tourner la roue</Text>
+          <LoaderPinwheel color={colors.white} size={40} />
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            spinWheel(true);
+          }}
+        >
+          <Text style={styles.buttonText}>Choisir Linus</Text>
+          <Martini color={colors.white} size={40} />
+        </Pressable>
+      </View>
       {winner && (
         <Text style={styles.winnerText}>
           {" "}
           Bravo {winner.name[0].toUpperCase() + winner.name.slice(1)} ! 🎉
+        </Text>
+      )}
+      {isLinus && (
+        <Text style={styles.winnerText}>
+          {" "}
+          {isLinus.name[0].toUpperCase() + isLinus.name.slice(1)} est Linus ! 🍹
         </Text>
       )}
     </View>
@@ -142,27 +168,42 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    marginTop: 40,
+    marginTop: 10,
     padding: 15,
     backgroundColor: colors.secondary,
     borderRadius: 50,
-    height: 100,
-    width: 300,
+    height: 200,
+    width: 150,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
     color: colors.white,
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 15,
   },
   winnerText: {
-    fontSize: 50,
+    fontSize: 35,
     fontWeight: "bold",
     color: colors.white,
+    backgroundColor: colors.primary,
     textAlign: "center",
     position: "absolute",
-    top: "57%",
+    top: "40%",
+    height: 100,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    borderColor: colors.lightGray,
+    borderWidth: 1,
     zIndex: 2,
+  },
+  btnContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%",
   },
 });

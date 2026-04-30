@@ -94,9 +94,23 @@ export default function WheelScreen() {
       const segmentSize = 360 / guestsList.length;
       const adjustedAngle = (360 - angleFinal + 360) % 360;
       const winnerIndex = Math.floor(adjustedAngle / segmentSize);
-      linus
-        ? setIsLinus(guestsList[winnerIndex])
-        : setWinner(guestsList[winnerIndex]);
+
+      if (linus) {
+        if (
+          guestsList[winnerIndex].name === "clémence" ||
+          guestsList[winnerIndex].name === "clemlaqueen"
+        ) {
+          spinWheel(true);
+        } else {
+          setIsLinus(guestsList[winnerIndex]);
+        }
+        return;
+      } else {
+        setWinner(guestsList[winnerIndex]);
+      }
+      // linus
+      //   ? setIsLinus(guestsList[winnerIndex])
+      //   : setWinner(guestsList[winnerIndex]);
     });
   };
 

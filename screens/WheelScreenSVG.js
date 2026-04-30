@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { ArrowBigDown, Martini, LoaderPinwheel } from "lucide-react-native";
 import { colors, wheelColors } from "./colors";
+import { useIsFocused } from "@react-navigation/native";
 import WheelSvg from "../components/WheelSvg";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserList, changeLinusStore } from "../reducers/user";
@@ -17,6 +18,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default function WheelScreen() {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const user = useSelector((state) => state.user);
   const isClem = user.token === "nMfy7Fe8hQ5iE6LXY8RPJ_Okl9VKUaL0";
   const linus = useSelector((state) => state.user.linus);
@@ -144,11 +146,14 @@ export default function WheelScreen() {
     });
   };
 
-  const linusSurprise = surprises?.find(
-    (s) => s._id === "69f10cf39507471203ed993a",
-  );
+  const [canAccessLinus, setCanAccessLinus] = useState(false);
 
-  const canAccessLinus = linusSurprise?.isUnlocked;
+  useEffect(() => {
+    const linusSurprise = surprises?.find(
+      (s) => s._id === "69f10cf39507471203ed993a",
+    );
+    setCanAccessLinus(linusSurprise?.isUnlocked);
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>

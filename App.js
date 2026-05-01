@@ -251,13 +251,16 @@ const AppNavigation = () => {
 
   const setupPush = async () => {
     const registration = await registerServiceWorker();
-
-    if (registration) {
-      console.log(
-        "On peut maintenant demander la souscription !",
-        registration,
-      );
-      await subscribeUser();
+    try {
+      if (registration) {
+        console.log(
+          "On peut maintenant demander la souscription !",
+          registration,
+        );
+        await subscribeUser();
+      }
+    } catch (err) {
+      console.error("Problème lors de l'activation des notifications : ", err);
     }
   };
 

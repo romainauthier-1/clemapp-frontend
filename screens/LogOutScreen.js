@@ -38,9 +38,13 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
         </View>
       ) : (
         <Pressable
-          onPress={() => {
-            onActivatePush;
-            dispatch(activateNotif(true));
+          onPress={async () => {
+            try {
+              await onActivatePush();
+              dispatch(activateNotif(true));
+            } catch (err) {
+              console.error("Erreur activation notifs :", err);
+            }
           }}
           style={styles.logoutButton}
         >

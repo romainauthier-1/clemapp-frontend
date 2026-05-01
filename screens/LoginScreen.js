@@ -9,7 +9,7 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 import { colors } from "./colors";
@@ -25,6 +25,7 @@ export default function LoginScreen({ navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [focus, setFocus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const passwordRef = useRef(null);
 
   const user = useSelector((state) => state.user);
 
@@ -112,7 +113,9 @@ export default function LoginScreen({ navigation }) {
                 value={name}
                 onChangeText={setName}
                 keyboardType="default"
+                returnKeyType="next"
                 autoCapitalize="words"
+                onSubmitEditing={() => passwordRef.current?.focus()}
                 onFocus={() => setFocus("name")}
                 onBlur={() => setFocus(null)}
               />
@@ -123,6 +126,7 @@ export default function LoginScreen({ navigation }) {
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.passwordText}
+                  ref={passwordRef}
                   placeholder="************"
                   placeholderTextColor={colors.lightGray}
                   value={password}

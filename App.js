@@ -294,7 +294,7 @@ export default function App({ navigation }) {
             <AppNavigation />
           </NavigationContainer>
         </PersistGate>
-        <StatusBar style="light" translucent={true} />
+        <StatusBar style="light" />
         <FlashMessage position="top" />
       </SafeAreaProvider>
     </Provider>

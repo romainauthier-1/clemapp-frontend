@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSurprises, unlockSurprise } from "../reducers/surprises";
 import { colors } from "./colors";
 import { Sunrise, Sunset } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -113,7 +114,7 @@ export default function WelcomeScreen({ navigation }) {
   }, [isFocused]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>
         🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
       </Text>
@@ -155,7 +156,7 @@ export default function WelcomeScreen({ navigation }) {
           </ScrollView>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

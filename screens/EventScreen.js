@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUserList, activateNotif } from "../reducers/user";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { colors } from "./colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EventScreen() {
   const guests1 = useSelector((state) => state.user.userList);
@@ -203,68 +204,74 @@ export default function EventScreen() {
   const canSend = tempTokenList.length > 0 && notifTitle && notifBody;
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.headerTitle}>Centre de Commande</Text>
-      {isLoading ? (
-        <View style={styles.container}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : (
-        <>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🚨 Fil Rouge 🚨</Text>
-            <Pressable
-              onPress={sendFilRougeNotification}
-              style={[styles.mainButton, styles.filRougeButton, { opacity: 1 }]}
-            >
-              <Text style={styles.buttonText}>Déclencher</Text>
-            </Pressable>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.headerTitle}>Centre de Commande</Text>
+        {isLoading ? (
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
-
-          <View>
+        ) : (
+          <>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Notif personnalisée</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Titre de la notif'"
-                placeholderTextColor={colors.lightGray}
-                value={notifTitle}
-                onChangeText={setNotifTitle}
-                autoCapitalize="sentences"
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                placeholder="Contenu de la notif'"
-                placeholderTextColor={colors.lightGray}
-                onChangeText={setNotifBody}
-                returnKeyType="done"
-                onSubmitEditing={sendNotification}
-                autoCapitalize="sentences"
-                multiline={true}
-              ></TextInput>
-            </View>
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Destinataires ({tempTokenList.length})
-              </Text>
-              <View style={styles.listContainer}>{userListToDisplay}</View>
+              <Text style={styles.sectionTitle}>🚨 Fil Rouge 🚨</Text>
               <Pressable
-                disabled={!canSend}
-                onPress={sendNotification}
+                onPress={sendFilRougeNotification}
                 style={[
                   styles.mainButton,
-                  styles.sendButton,
-                  { opacity: canSend ? 1 : 0.5 },
+                  styles.filRougeButton,
+                  { opacity: 1 },
                 ]}
               >
-                <Text style={styles.buttonText}>Envoyer</Text>
+                <Text style={styles.buttonText}>Déclencher</Text>
               </Pressable>
             </View>
-            <View style={{ height: 50 }} />
-          </View>
-        </>
-      )}
-    </ScrollView>
+
+            <View>
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Notif personnalisée</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Titre de la notif'"
+                  placeholderTextColor={colors.lightGray}
+                  value={notifTitle}
+                  onChangeText={setNotifTitle}
+                  autoCapitalize="sentences"
+                ></TextInput>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Contenu de la notif'"
+                  placeholderTextColor={colors.lightGray}
+                  onChangeText={setNotifBody}
+                  returnKeyType="done"
+                  onSubmitEditing={sendNotification}
+                  autoCapitalize="sentences"
+                  multiline={true}
+                ></TextInput>
+              </View>
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>
+                  Destinataires ({tempTokenList.length})
+                </Text>
+                <View style={styles.listContainer}>{userListToDisplay}</View>
+                <Pressable
+                  disabled={!canSend}
+                  onPress={sendNotification}
+                  style={[
+                    styles.mainButton,
+                    styles.sendButton,
+                    { opacity: canSend ? 1 : 0.5 },
+                  ]}
+                >
+                  <Text style={styles.buttonText}>Envoyer</Text>
+                </Pressable>
+              </View>
+              <View style={{ height: 50 }} />
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

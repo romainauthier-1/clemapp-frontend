@@ -15,6 +15,7 @@ import WheelSvg from "../components/WheelSvg";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserList, changeLinusStore } from "../reducers/user";
 import { showMessage, hideMessage } from "react-native-flash-message";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function WheelScreen() {
   const dispatch = useDispatch();
@@ -218,7 +219,7 @@ export default function WheelScreen() {
   }, [isFocused]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* <View style={styles.pointer} /> */}
 
       <ArrowBigDown
@@ -271,7 +272,7 @@ export default function WheelScreen() {
           {isLinus.name[0].toUpperCase() + isLinus.name.slice(1)} est Linus ! 🍹
         </Text>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

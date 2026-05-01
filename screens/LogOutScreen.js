@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers/user";
 import { colors } from "./colors";
 import { activateNotif } from "../reducers/user";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -25,7 +26,7 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
   const isNotifActive = useSelector((state) => state.user.notifActivated);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>
         🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
       </Text>
@@ -51,7 +52,7 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
           <Text style={styles.text}>🔔 Active les notifs !</Text>
         </Pressable>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

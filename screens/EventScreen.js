@@ -26,6 +26,7 @@ export default function EventScreen() {
   const [notifBody, setNotifBody] = useState(null);
   const tokenInRedux = useSelector((state) => state.user.token);
   const [isLoading, setIsLoading] = useState(false);
+  const bodyRef = useRef(null);
   const dispatch = useDispatch();
 
   const getAllUsers = async () => {
@@ -229,16 +230,19 @@ export default function EventScreen() {
                 placeholder="Titre de la notif'"
                 placeholderTextColor={colors.lightGray}
                 value={notifTitle}
+                returnKeyType="next"
+                onSubmitEditing={() => bodyRef.current?.focus()}
                 onChangeText={setNotifTitle}
                 autoCapitalize="sentences"
               ></TextInput>
               <TextInput
                 style={styles.input}
+                ref={bodyRef}
                 placeholder="Contenu de la notif'"
                 placeholderTextColor={colors.lightGray}
                 onChangeText={setNotifBody}
                 returnKeyType="done"
-                onSubmitEditing={sendNotification}
+                onSubmitEditing={() => canSend && sendNotification()}
                 autoCapitalize="sentences"
                 multiline={true}
               ></TextInput>

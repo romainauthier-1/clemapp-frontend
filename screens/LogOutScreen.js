@@ -26,7 +26,7 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
   const isNotifActive = useSelector((state) => state.user.notifActivated);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>
         🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
       </Text>
@@ -52,7 +52,7 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
           <Text style={styles.text}>🔔 Active les notifs !</Text>
         </Pressable>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -82,89 +82,85 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <View style={styles.header}>
-          <Text style={styles.title}>👑 ClemApp 👑</Text>
-          <Text style={styles.subtitle}>L'app du week-end !</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>👑 ClemApp 👑</Text>
+        <Text style={styles.subtitle}>L'app du week-end !</Text>
+      </View>
+      {isLoading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-        {isLoading ? (
-          <View style={styles.container}>
-            <ActivityIndicator size="large" color={colors.primary} />
+      ) : (
+        <View style={styles.content}>
+          <View style={styles.contentHeader}>
+            <Text style={styles.contentHeaderTitle}>Connecte toi</Text>
+            <Text style={styles.contentHeaderSubtitle}>Pour tout savoir !</Text>
           </View>
-        ) : (
-          <View style={styles.content}>
-            <View style={styles.contentHeader}>
-              <Text style={styles.contentHeaderTitle}>Connecte toi</Text>
-              <Text style={styles.contentHeaderSubtitle}>
-                Pour tout savoir !
-              </Text>
-            </View>
 
+          <View>
+            {/*  sert à regrouper le formulaire */}
             <View>
-              {/*  sert à regrouper le formulaire */}
-              <View>
-                <Text style={styles.label}>Ton prénom</Text>
+              <Text style={styles.label}>Ton prénom</Text>
 
-                <TextInput
-                  style={styles.input}
-                  placeholder="Alexandre"
-                  placeholderTextColor={colors.lightGray}
-                  value={name}
-                  onChangeText={setName}
-                  keyboardType="default"
-                  returnKeyType="next"
-                  autoCapitalize="words"
-                  onSubmitEditing={() => passwordRef.current?.focus()}
-                  onFocus={() => setFocus("name")}
-                  onBlur={() => setFocus(null)}
-                />
-              </View>
-              <View style={{ marginBottom: 24 }} />
-              <View>
-                <Text style={styles.label}>Mot de passe</Text>
-                <View style={styles.passwordContainer}>
-                  <TextInput
-                    style={styles.passwordText}
-                    ref={passwordRef}
-                    placeholder="************"
-                    placeholderTextColor={colors.lightGray}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!isPasswordVisible}
-                    returnKeyType="done"
-                    onSubmitEditing={handleLogin}
-                    onFocus={() => setFocus("password")}
-                    onBlur={() => setFocus(null)}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                  <Pressable onPress={togglePasswordVisibility}>
-                    {isPasswordVisible ? (
-                      <EyeOff size={20} color={colors.lightGray} />
-                    ) : (
-                      <Eye size={20} color={colors.lightGray} />
-                    )}
-                  </Pressable>
-                </View>
-              </View>
-              {errorMessage !== "" && (
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              )}
+              <TextInput
+                style={styles.input}
+                placeholder="Alexandre"
+                placeholderTextColor={colors.lightGray}
+                value={name}
+                onChangeText={setName}
+                keyboardType="default"
+                returnKeyType="next"
+                autoCapitalize="words"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+                onFocus={() => setFocus("name")}
+                onBlur={() => setFocus(null)}
+              />
             </View>
-
             <View style={{ marginBottom: 24 }} />
-
-            <Pressable style={styles.buttonPrimary} onPress={handleLogin}>
-              <Text style={styles.buttonPrimaryText}>Se connecter</Text>
-            </Pressable>
+            <View>
+              <Text style={styles.label}>Mot de passe</Text>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordText}
+                  ref={passwordRef}
+                  placeholder="************"
+                  placeholderTextColor={colors.lightGray}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!isPasswordVisible}
+                  returnKeyType="done"
+                  onSubmitEditing={handleLogin}
+                  onFocus={() => setFocus("password")}
+                  onBlur={() => setFocus(null)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <Pressable onPress={togglePasswordVisibility}>
+                  {isPasswordVisible ? (
+                    <EyeOff size={20} color={colors.lightGray} />
+                  ) : (
+                    <Eye size={20} color={colors.lightGray} />
+                  )}
+                </Pressable>
+              </View>
+            </View>
+            {errorMessage !== "" && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
           </View>
-        )}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+          <View style={{ marginBottom: 24 }} />
+
+          <Pressable style={styles.buttonPrimary} onPress={handleLogin}>
+            <Text style={styles.buttonPrimaryText}>Se connecter</Text>
+          </Pressable>
+        </View>
+      )}
+    </KeyboardAvoidingView>
   );
 }
 

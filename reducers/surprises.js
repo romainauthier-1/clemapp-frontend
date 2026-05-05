@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   surprises: [],
   selectedSurprise: null,
+  updatingSurprise: null,
 };
 
 const surprisesSlice = createSlice({

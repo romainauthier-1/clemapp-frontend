@@ -91,12 +91,14 @@ export default function WelcomeScreen({ navigation }) {
 
   const checkLinusPerson = async () => {
     try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/linus`,
-      );
-      const data = await response.json();
-      if (data.result) {
-        dispatch(changeLinusStore(data.linus));
+      if (isLinusUnlocked) {
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/linus`,
+        );
+        const data = await response.json();
+        if (data.result) {
+          dispatch(changeLinusStore(data.linus));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -132,9 +134,7 @@ export default function WelcomeScreen({ navigation }) {
         <Text style={styles.linusText}>
           {currentLinus[0].toUpperCase() + currentLinus.slice(1)} est Linus ! 🍹
         </Text>
-      ) : (
-        <Text style={styles.linusText}>Rien de ouf ici (pour l'instant) !</Text>
-      )}
+      ) : null}
       {!weatherInfos || !weatherForecast ? (
         <ActivityIndicator size="large" color={colors.primary} />
       ) : (

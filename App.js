@@ -1,16 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
-import { showMessage, hideMessage } from "react-native-flash-message";
-import { useEffect } from "react";
 
 import {
   PartyPopper,
@@ -18,6 +15,7 @@ import {
   SquareArrowRightExit,
   LoaderPinwheel,
   Crown,
+  Settings,
 } from "lucide-react-native";
 import { colors } from "./screens/colors";
 
@@ -40,9 +38,9 @@ import LoginScreen from "./screens/LoginScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SurprisesScreen from "./screens/SurprisesScreen";
 import LogOutScreen from "./screens/LogOutScreen";
-import WheelScreen from "./screens/WheelScreen";
 import WheelScreenSVG from "./screens/WheelScreenSVG";
 import EventScreen from "./screens/EventScreen";
+import OptionsScreen from "./screens/OptionsScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -56,6 +54,8 @@ const HomeTabs = ({ onActivatePush }) => {
   const canAccessFilRouge =
     user.status === "guest+" ||
     (user.status === "star" && filRouge?.isUnlocked === true);
+
+  const canAccessSettings = user.status === "guest+";
 
   return (
     <Tab.Navigator
@@ -138,6 +138,27 @@ const HomeTabs = ({ onActivatePush }) => {
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <Crown
+                size={focused ? 30 : 20}
+                color={focused ? colors.backgroundLight : colors.primaryLight}
+              />
+            ),
+            tabBarActiveTintColor: colors.backgroundLight,
+            tabBarInactiveTintColor: colors.primaryLight,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "bold",
+              marginBottom: 5,
+            },
+          }}
+        />
+      )}
+      {canAccessSettings && (
+        <Tab.Screen
+          name="Réglages"
+          component={OptionsScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Settings
                 size={focused ? 30 : 20}
                 color={focused ? colors.backgroundLight : colors.primaryLight}
               />

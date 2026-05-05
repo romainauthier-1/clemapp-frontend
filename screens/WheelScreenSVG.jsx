@@ -65,7 +65,7 @@ export default function WheelScreen() {
     if (guests1.length === 0) {
       getAllUsers();
     }
-  }, []);
+  }, [isFocused]);
 
   const rotation = useRef(new Animated.Value(0)).current;
 

@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 import { setSurprises, setSelectedSurprise } from "../reducers/surprises";
 import { colors } from "./colors";
-import { Eye, EyeOff, CircleArrowRight } from "lucide-react-native";
+import { Eye, EyeOff, CircleArrowRight, Trash } from "lucide-react-native";
 import { showMessage } from "react-native-flash-message";
 
 const screenHeight = Dimensions.get("window").height;
@@ -66,7 +66,7 @@ export default function OptionsScreen() {
 
   const validateInputs = () => {
     if (!name || !password || !passwordCheck || !status) {
-      setErrorMessage("Remplir rous les champs.");
+      setErrorMessage("Remplir tous les champs.");
       return false;
     }
 
@@ -102,15 +102,6 @@ export default function OptionsScreen() {
 
       const data = await response.json();
       if (data.result) {
-        dispatch(
-          login({
-            name: data.savedUser.name,
-            token: data.savedUser.token,
-            status: data.savedUser.status,
-            subscription: data.foundUser.subscription ? true : false,
-            linus: data.linus,
-          }),
-        );
         resetGuestInputs();
         showMessage({
           message: data.message,
@@ -137,11 +128,11 @@ export default function OptionsScreen() {
   );
   const [type, setType] = useState("");
   const possibleTypes = ["Happening", "Activité", "Confort", "Cadeau"];
-  const [organizedBy, setOrganizedBy] = useState(
+  const [organizerName, setOrganizerName] = useState(
     user.name[0].toUpperCase() + user.name.slice(1),
   );
-  const [revealMode, setRevealMode] = useState("");
   const possibleRevealModes = ["Time", "Manual", "Riddle"];
+  const [revealMode, setRevealMode] = useState(possibleRevealModes[0]);
   const [revealAt, setRevealAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [riddle, setRiddle] = useState("");
@@ -149,25 +140,12 @@ export default function OptionsScreen() {
   const [answer, setAnswer] = useState("");
   const [notes, setNotes] = useState("");
 
-  const surprise = {
-    title,
-    description,
-    type,
-    organizedBy,
-    revealMode,
-    revealAt,
-    riddle,
-    answer,
-    hint,
-    notes,
-  };
-
   const resetSurpriseInputs = () => {
     setTitle("");
     setDescription("");
     setType("");
-    setOrganizedBy("");
-    setRevealMode("");
+    setOrganizerName(user.name[0].toUpperCase() + user.name.slice(1));
+    setRevealMode(possibleRevealModes[0]);
     setRevealAt("");
     setRiddle("");
     setHint("");
@@ -175,9 +153,36 @@ export default function OptionsScreen() {
     setNotes("");
   };
 
-  const handleNewSurprise = async (surprise) => {
+  const validateSurpriseInputs = () => {
+    if (!title || !description || !organizerName || !revealMode || !revealAt) {
+      setErrorMessage("Remplir tous les champs.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNewSurprise = async () => {
     try {
       setIsLoading(true);
+      setErrorMessage("");
+
+      if (!validateSurpriseInputs()) {
+        return;
+      }
+
+      const surprise = {
+        title,
+        description,
+        type,
+        organizerName: organizerName.toLowerCase(),
+        revealMode: revealMode.toLowerCase(),
+        revealAt,
+        riddle,
+        answer,
+        hint,
+        notes,
+      };
 
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/new`,
@@ -189,17 +194,18 @@ export default function OptionsScreen() {
       );
 
       const data = await response.json();
-
       if (data.result) {
         showMessage({
           message: data.message,
           type: "success",
         });
         resetSurpriseInputs();
+      } else {
+        setErrorMessage(data.message);
       }
     } catch (err) {
       console.error(err);
-      setMessageError(err.message);
+      setErrorMessage("Erreur: ", err.message);
     } finally {
       setIsLoading(false);
     }
@@ -228,14 +234,14 @@ export default function OptionsScreen() {
 
   useEffect(() => {
     getSurprises();
-  }, []);
+  }, [typeOfUpdate]);
 
   useEffect(() => {
     if (selectedSurprise && typeOfUpdate === "updateSurprise") {
       setTitle(selectedSurprise.title);
       setDescription(selectedSurprise.description);
       setType(selectedSurprise.type);
-      setOrganizedBy(selectedSurprise.organizedBy?.name);
+      setOrganizerName(selectedSurprise.organizedBy?.name);
       setRevealMode(selectedSurprise.revealMode);
       setRevealAt(new Date(selectedSurprise.revealAt));
       setRiddle(selectedSurprise.riddle || "");
@@ -247,6 +253,43 @@ export default function OptionsScreen() {
       dispatch(setSelectedSurprise(null));
     }
   }, [selectedSurprise, typeOfUpdate]);
+
+  const deleteSurprise = async (surpriseId) => {
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer cette surprise ?",
+    );
+    if (confirmed) {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/${surpriseId}`,
+          {
+            method: "DELETE",
+            // headers: {"Content-Type": "application/json"}
+          },
+        );
+
+        const data = await response.json();
+
+        if (data.result) {
+          showMessage({
+            message: data.message,
+            type: "success",
+          });
+          resetSurpriseInputs();
+          setSelectedSurprise(null);
+          getSurprises();
+        } else {
+          setErrorMessage("Erreur : ", data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        setErrorMessage("Erreur : ", err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   const surprisesList = surprises.map((surprise, i) => {
     const isSelected = selectedSurprise?._id === surprise._id;
@@ -262,15 +305,34 @@ export default function OptionsScreen() {
         </Text>
         <CircleArrowRight
           size={15}
-          color={isSelected ? colors.white : colors.ligthGray}
+          color={isSelected ? colors.white : colors.lightGray}
         />
       </Pressable>
     );
   });
 
-  const handleUpdateSurprise = async (surprise) => {
+  const handleUpdateSurprise = async () => {
     try {
       setIsLoading(true);
+      setErrorMessage("");
+
+      if (!validateSurpriseInputs()) {
+        return;
+      }
+
+      const surprise = {
+        _id: selectedSurprise._id,
+        title,
+        description,
+        type,
+        organizerName: organizerName.toLowerCase(),
+        revealMode: revealMode.toLowerCase(),
+        revealAt,
+        riddle,
+        answer,
+        hint,
+        notes,
+      };
 
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/update/${surprise._id}`,
@@ -290,6 +352,7 @@ export default function OptionsScreen() {
         });
         resetSurpriseInputs();
         setSelectedSurprise(null);
+        getSurprises();
       }
     } catch (err) {
       console.error(err);
@@ -440,8 +503,11 @@ export default function OptionsScreen() {
               {typeOfUpdate === "updateSurprise" && (
                 <View style={styles.surprisesList}>{surprisesList}</View>
               )}
+              {errorMessage !== "" && (
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              )}
               <View>
-                <Text style={styles.label}>Titre</Text>
+                <Text style={styles.label}>Titre *</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Titre"
@@ -457,7 +523,7 @@ export default function OptionsScreen() {
                 />
               </View>
               <View>
-                <Text style={styles.label}>Description</Text>
+                <Text style={styles.label}>Description *</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Description"
@@ -482,13 +548,13 @@ export default function OptionsScreen() {
                 </Picker>
               </View>
               <View>
-                <Text style={styles.label}>Organisateur.ice</Text>
+                <Text style={styles.label}>Organisateur.ice *</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Organisateur.ice"
                   placeholderTextColor={colors.lightGray}
-                  value={organizedBy}
-                  onChangeText={setOrganizedBy}
+                  value={organizerName}
+                  onChangeText={setOrganizerName}
                   returnKeyType="next"
                   onFocus={() => setFocus("organisateur.ice")}
                   onBlur={() => setFocus(null)}
@@ -497,7 +563,7 @@ export default function OptionsScreen() {
                 />
               </View>
               <View>
-                <Text style={styles.label}>Mode de révélation</Text>
+                <Text style={styles.label}>Mode de révélation *</Text>
                 <Picker
                   style={styles.input}
                   selectedValue={revealMode}
@@ -507,7 +573,7 @@ export default function OptionsScreen() {
                 </Picker>
               </View>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Text style={styles.label}>Date & heure révélation</Text>
+                <Text style={styles.label}>Date & heure révélation *</Text>
                 {Platform.OS === "web" ? (
                   <input
                     type="datetime-local"
@@ -593,8 +659,8 @@ export default function OptionsScreen() {
                   returnKeyType="go"
                   onSubmitEditing={() => {
                     typeOfUpdate === "+surprise"
-                      ? handleNewSurprise(surprise)
-                      : handleUpdateSurprise(surprise);
+                      ? handleNewSurprise()
+                      : handleUpdateSurprise();
                   }}
                   onFocus={() => setFocus("notes")}
                   onBlur={() => setFocus(null)}
@@ -602,21 +668,27 @@ export default function OptionsScreen() {
                   autoCorrect={true}
                 />
               </View>
-              {errorMessage !== "" && (
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              )}
+
               <Pressable
                 style={styles.buttonPrimary}
                 onPress={() => {
                   typeOfUpdate === "+surprise"
-                    ? handleNewSurprise(surprise)
-                    : handleUpdateSurprise(surprise);
+                    ? handleNewSurprise()
+                    : handleUpdateSurprise();
                 }}
               >
                 <Text style={styles.buttonPrimaryText}>
-                  {typeOfUpdate === "+surprise" ? "Envoyer" : "Mettre à jour"}
+                  {typeOfUpdate === "+surprise" ? "Créer" : "Mettre à jour"}
                 </Text>
               </Pressable>
+              {typeOfUpdate === "updateSurprise" && (
+                <Pressable
+                  onPress={() => deleteSurprise(selectedSurprise._id)}
+                  style={styles.deleteBtn}
+                >
+                  <Trash size={30} color={colors.white} />
+                </Pressable>
+              )}
             </ScrollView>
           )}
 
@@ -725,7 +797,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   buttonPrimaryText: {
-    color: colors.lightGray,
+    color: colors.white,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -779,5 +851,17 @@ const styles = StyleSheet.create({
   },
   masterScrollView: {
     paddingBottom: 100,
+  },
+  deleteBtn: {
+    width: "100%",
+    backgroundColor: colors.destructive,
+    borderColor: colors.white,
+    borderWidth: 1,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+    padding: 10,
+    opacity: 0.9,
   },
 });

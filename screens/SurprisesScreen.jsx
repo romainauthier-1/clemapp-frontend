@@ -318,19 +318,8 @@ export default function SurprisesScreen({ navigation }) {
           bounces={true}
           alwaysBounceVertical={true}
           overScrollMode="always"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => {
-                console.log("----Refresh lancé !----");
-                onRefresh();
-              }}
-              colors={[colors.primary]}
-              tintColor={colors.primary}
-            />
-          }
         >
-          {isLoading && !refreshing ? (
+          {isLoading ? (
             <ActivityIndicator size="large" color={colors.primary} />
           ) : (
             <>

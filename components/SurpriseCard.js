@@ -3,12 +3,12 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInput,
   Dimensions,
-  KeyboardAvoidingView,
+  Alert,
   Platform,
-  Touchable,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,7 @@ export default function SurpriseCard({
   const [viewRiddle, setViewRiddle] = useState(false);
   const [viewHint, setViewHint] = useState(false);
   const [answerInput, setAnswerInput] = useState(null);
+  const [confirmation, setConfirmation] = useState(false);
   const user = useSelector((state) => state.user);
 
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -128,6 +129,29 @@ export default function SurpriseCard({
         </Text>
       </View>
     );
+  };
+
+  const handleConfirmation = (surpriseId) => {
+    if (Platform.OS === "web") {
+      const confirmed = window.confirm(
+        "Débloquer la surprise ? On est sûr.e de la manip ?",
+      );
+      if (confirmed) {
+        handleManualUnlock(surpriseId);
+      } else {
+        Alert.alert("Débloquer la surprise ?", "On est sûr.e de la manip ?", [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Confirmer",
+            style: "destructive",
+            onPress: async () => handleManualUnlock(surpriseId),
+          },
+        ]);
+      }
+    }
   };
 
   const handleManualUnlock = async (surpriseId) => {
@@ -225,7 +249,7 @@ export default function SurpriseCard({
         {user.status === "guest+" && !surprise.isUnlocked && (
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleManualUnlock(surprise._id)}
+            onPress={() => handleConfirmation(surprise._id)}
           >
             <Text style={styles.text}>Débloquer la surprise</Text>
           </TouchableOpacity>

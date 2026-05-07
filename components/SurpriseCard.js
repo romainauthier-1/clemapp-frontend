@@ -260,7 +260,9 @@ export default function SurpriseCard({
 
   return (
     <View key={surprise._id}>
-      {user.status === "guest" || user.status === "guest+" ? (
+      {user.status === "guest" || user.status === "guest+" ? surprise.title === "Mais qui est cette personne ?" && user.status !== "guest+" && !surprise.isUnlocked ? (
+      lockedSurpriseCard()
+      ) : (
         guestSurpriseCard()
       ) : (
         <>

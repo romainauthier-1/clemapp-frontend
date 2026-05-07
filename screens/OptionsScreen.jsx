@@ -390,12 +390,12 @@ export default function OptionsScreen() {
     return (
       <Pressable
         key={i}
-        style={styles.contentHeaderBtn}
+        style={typeOfUpdate === update.slug ? styles.selectedHeaderBtn : styles.contentHeaderBtn}
         onPress={() => {
           setTypeOfUpdate(update.slug);
         }}
       >
-        <Text style={styles.contentHeaderText}>{update.display}</Text>
+        <Text style={typeOfUpdate === update.slug ? styles.selectedHeaderText : styles.contentHeaderText}>{update.display}</Text>
       </Pressable>
     );
   });
@@ -971,9 +971,18 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     padding: 10,
   },
+  selectedHeaderBtn: {
+    backgroundColor: colors.white,
+    borderRadius: 25,
+    padding: 10,
+    },
   contentHeaderText: {
     color: colors.white,
     fontWeight: "bold",
+  },
+  selectedHeaderText: {
+    color: colors.primary,
+    fontweightm "bold",
   },
   label: {
     color: colors.lightGray,

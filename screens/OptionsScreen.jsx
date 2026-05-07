@@ -540,6 +540,42 @@ export default function OptionsScreen() {
       setIsLoading(false);
     }
   };
+
+  const handleDeleteGuest = async () => {
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer cet.te invité.e ?",
+    );
+    if (confirmed) {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/delete/${selectedGuestId}`,
+          {
+            method: "DELETE",
+          },
+        );
+
+        const data = await response.json();
+
+        if (data.result) {
+          showMessage({
+            message: data.message,
+            type: "success",
+          });
+          resetGuestInputs();
+          setSelectedGuest(null);
+          getAllUsers();
+        } else {
+          setErrorMessage("Erreur : ", data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        setErrorMessage("Erreur : ", err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -667,6 +703,14 @@ export default function OptionsScreen() {
                     : "Mettre à jour"}
                 </Text>
               </Pressable>
+              {typeOfUpdate === "updateGuest" && (
+                <Pressable
+                  onPress={() => handleDeleteGuest()}
+                  style={styles.deleteBtn}
+                >
+                  <Trash size={30} color={colors.white} />
+                </Pressable>
+              )}
             </ScrollView>
           )}
           {(typeOfUpdate === "surprise" || "updateSurprise") && (

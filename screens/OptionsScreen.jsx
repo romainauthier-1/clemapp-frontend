@@ -25,7 +25,9 @@ const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 
 export default function OptionsScreen() {
-  const surprises = useSelector((state) => state.surprises.surprises);
+  const surprises = useSelector((state) => state.surprises.surprises).toSorted(
+    (a, b) => a.revealAt > b.revealAt,
+  );
   const selectedSurpriseId = useSelector(
     (state) => state.surprises.selectedSurprise?._id,
   );
@@ -54,7 +56,7 @@ export default function OptionsScreen() {
   const passwordCheckRef = useRef(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isPasswordCheckVisible, setIsPasswordCheckVisible] = useState(false);
-  const statusList = ["guest", "guest+", "star"];
+  const statusList = ["guest", "guest+", "guest-", "star"];
   const [status, setStatus] = useState(statusList[0]);
 
   const resetGuestInputs = () => {

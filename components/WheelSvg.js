@@ -6,6 +6,20 @@ import { colors, wheelColors } from "../screens/colors";
 // const wheelColors = ["#FF8080", "#80FF80", "#8080FF"]; // Rouge, Vert, Bleu pastel
 
 export default function WheelSvg({ guests, size }) {
+  const checkName = (user) => {
+    if (user.name.includes("-")) {
+      let composedName = user.name.split("-");
+      composedName =
+        composedName[0][0].toUpperCase() +
+        composedName[0].slice(1) +
+        " " +
+        composedName[1].toUpperCase();
+      return composedName;
+    } else {
+      let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+      return regularName;
+    }
+  };
   const radius = size / 2;
   const anglePerSegment = 360 / guests?.length;
 
@@ -72,7 +86,7 @@ export default function WheelSvg({ guests, size }) {
               alignmentBaseline="middle" // Centre verticalement
               transform={`rotate(${index * anglePerSegment + anglePerSegment / 2} ${radius + (radius / 1.5) * Math.cos(((index * anglePerSegment + anglePerSegment / 2) * Math.PI) / 180)} ${radius + (radius / 1.5) * Math.sin(((index * anglePerSegment + anglePerSegment / 2) * Math.PI) / 180)})`}
             >
-              {guest.name[0].toUpperCase() + guest.name.slice(1).toLowerCase()}
+              {checkName(guest)}
             </SvgText>
           </G>
         ))}

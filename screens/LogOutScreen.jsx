@@ -25,11 +25,26 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
   const user = useSelector((state) => state.user);
   const isNotifActive = useSelector((state) => state.user.notifActivated);
 
+  const checkName = () => {
+    if (user.name.includes("-")) {
+      let composedName = user.name.split("-");
+      composedName =
+        composedName[0][0].toUpperCase() +
+        composedName[0].slice(1) +
+        " " +
+        composedName[1].toUpperCase();
+      return composedName;
+    } else {
+      let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+      return regularName;
+    }
+  };
+
+  const finalName = checkName();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
-      </Text>
+      <Text style={styles.title}>🤙 Salut {finalName} !</Text>
       <Pressable onPress={() => dispatch(logout())} style={styles.logoutButton}>
         <Text style={styles.text}>Déconnexion</Text>
       </Pressable>

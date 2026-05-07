@@ -24,7 +24,9 @@ export default function WheelScreen() {
   const linus = useSelector((state) => state.user.linus);
   const [isLoading, setIsLoading] = useState(false);
   const [isLinus, setIsLinus] = useState(null);
-  const guests1 = useSelector((state) => state.user.userList);
+  const originalGuestsList = useSelector((state) => state.user.userList);
+  const guests1 =
+    originalGuestsList?.filter((guest) => guest.status !== "guest-") || [];
   const guests2 =
     guests1?.filter(
       (guest) => guest.name !== "maxime" && guest.name !== "alicia",

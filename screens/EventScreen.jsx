@@ -15,10 +15,11 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import { colors } from "./colors";
 
 export default function EventScreen() {
-  const guests1 = useSelector((state) => state.user.userList);
-  const guests2 = guests1?.filter(
-    (guest) => guest.name !== "maxime" && guest.name !== "alicia",
-  );
+  const originalGuestsList = useSelector((state) => state.user.userList);
+  const guests1 = originalGuestsList?.toSorted((a, b) => a.name > b.name);
+  const guests2 = guests1
+    ?.filter((guest) => guest.name !== "maxime" && guest.name !== "alicia")
+    .toSorted((a, b) => a.name > b.name);
   const isNotifActive = useSelector((state) => state.user.notifActivated);
   const [tempUserList, setTempUserList] = useState([]);
   const [tempTokenList, setTempTokenList] = useState([]);
@@ -73,13 +74,28 @@ export default function EventScreen() {
       return;
     }
 
+    const checkName = () => {
+      if (user.name.includes("-")) {
+        let composedName = user.name.split("-");
+        composedName =
+          composedName[0][0].toUpperCase() +
+          composedName[0].slice(1) +
+          " " +
+          composedName[1].toUpperCase();
+        return composedName;
+      } else {
+        let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+        return regularName;
+      }
+    };
+
+    const finalName = checkName();
+
     return (
       <View style={styles.userContainer} key={index}>
         <View style={{ flex: 1 }}>
           <Text style={styles.userName}>
-            {user.name
-              ? user.name[0].toUpperCase() + user.name.slice(1)
-              : "Anonyme"}
+            {user.name ? finalName : "Anonyme"}
           </Text>
           <Text style={styles.userSubscription}>
             {user.subscription ? "✅ Notifs activées" : "❌ Notifs désactivées"}

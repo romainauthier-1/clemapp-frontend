@@ -114,11 +114,26 @@ export default function WelcomeScreen({ navigation }) {
     checkLinusPerson();
   }, [isFocused]);
 
+  const checkName = () => {
+    if (user.name.includes("-")) {
+      let composedName = user.name.split("-");
+      composedName =
+        composedName[0][0].toUpperCase() +
+        composedName[0].slice(1) +
+        " " +
+        composedName[1].toUpperCase();
+      return composedName;
+    } else {
+      let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+      return regularName;
+    }
+  };
+
+  const finalName = checkName();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        🤙 Salut {user.name[0].toUpperCase() + user.name.slice(1)} !
-      </Text>
+      <Text style={styles.title}>🤙 Salut {finalName} !</Text>
       {quote === null ? (
         <ActivityIndicator size="large" color={colors.primary} />
       ) : (

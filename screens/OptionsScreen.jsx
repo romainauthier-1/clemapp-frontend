@@ -982,7 +982,7 @@ const styles = StyleSheet.create({
   },
   selectedHeaderText: {
     color: colors.primary,
-    fontweightm "bold",
+    fontweight: "bold",
   },
   label: {
     color: colors.lightGray,

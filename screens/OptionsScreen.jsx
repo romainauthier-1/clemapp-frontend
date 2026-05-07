@@ -15,7 +15,7 @@ import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../reducers/user";
+import { setSelectedGuest, setUserList } from "../reducers/user";
 import { setSurprises, setSelectedSurprise } from "../reducers/surprises";
 import { colors } from "./colors";
 import { Eye, EyeOff, CircleArrowRight, Trash } from "lucide-react-native";
@@ -37,6 +37,15 @@ export default function OptionsScreen() {
     ),
   );
 
+  const guestsList = useSelector((state) => state.user.userList).toSorted(
+    (a, b) => a.name > b.name,
+  );
+
+  const selectedGuestId = useSelector((state) => state.user.selectedGuest?._id);
+  const selectedGuest = useSelector((state) =>
+    state.user.userList.find((guest) => guest._id === selectedGuestId),
+  );
+
   const isFocused = useIsFocused();
   const [focus, setFocus] = useState(null);
   const dispatch = useDispatch();
@@ -45,8 +54,13 @@ export default function OptionsScreen() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [typeOfUpdate, setTypeOfUpdate] = useState("guest"); // guest || +surprise || updatSurprise
-  const updateList = ["guest", "+surprise", "updateSurprise"];
+  const updateList = [
+    { slug: "guest", display: "Ajouter invité.e" },
+    { slug: "updateGuest", display: "Modifier invité.e" },
+    { slug: "surprise", display: "Ajouter surprise" },
+    { slug: "updateSurprise", display: "Modifier surprise" },
+  ];
+  const [typeOfUpdate, setTypeOfUpdate] = useState(updateList[0].slug); // guest || updateGuest || surprise || updatSurprise
 
   // Guest
   const [name, setName] = useState("");
@@ -58,6 +72,7 @@ export default function OptionsScreen() {
   const [isPasswordCheckVisible, setIsPasswordCheckVisible] = useState(false);
   const statusList = ["guest", "guest+", "guest-", "star"];
   const [status, setStatus] = useState(statusList[0]);
+  const statusRef = useRef(null);
 
   const resetGuestInputs = () => {
     setName("");
@@ -123,7 +138,7 @@ export default function OptionsScreen() {
     return <Picker.Item key={i} label={status} value={status} />;
   });
 
-  // +surprise
+  // surprise
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState(
     selectedSurprise?.description || "",
@@ -353,7 +368,7 @@ export default function OptionsScreen() {
           type: "success",
         });
         resetSurpriseInputs();
-        setSelectedSurprise(null);
+        dispatch(setSelectedSurprise(null));
         getSurprises();
       }
     } catch (err) {
@@ -376,13 +391,155 @@ export default function OptionsScreen() {
       <Pressable
         key={i}
         style={styles.contentHeaderBtn}
-        onPress={() => setTypeOfUpdate(update)}
+        onPress={() => {
+          setTypeOfUpdate(update.slug);
+        }}
       >
-        <Text style={styles.contentHeaderText}>{update}</Text>
+        <Text style={styles.contentHeaderText}>{update.display}</Text>
       </Pressable>
     );
   });
 
+  // updatGuest
+  const getAllUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/all`,
+      );
+      const data = await response.json();
+      dispatch(setUserList(data.allUsers));
+      return data;
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: "Problème de connexion BDD",
+        type: "warning",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedGuest && typeOfUpdate === "updateGuest") {
+      setName(selectedGuest.name);
+      setStatus(selectedGuest.status);
+    } else if (typeOfUpdate !== "updateGuest") {
+      resetGuestInputs();
+      dispatch(setSelectedGuest(null));
+    }
+  }, [selectedGuest, typeOfUpdate]);
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
+
+  const checkName = (user) => {
+    if (user.name.includes("-")) {
+      let composedName = user.name.split("-");
+      composedName =
+        composedName[0][0].toUpperCase() +
+        composedName[0].slice(1) +
+        " " +
+        composedName[1].toUpperCase();
+      return composedName;
+    } else {
+      let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+      return regularName;
+    }
+  };
+
+  const guestsListDisplay = guestsList.map((guest, i) => {
+    const isSelected = selectedGuest?._id === guest._id;
+    const statusDisplay =
+      guest.status === "guest"
+        ? "Invité.e"
+        : guest.status === "guest-"
+          ? "Invité.e absent"
+          : guest.status === "star"
+            ? "Star"
+            : "Admin";
+    return (
+      <Pressable
+        key={i}
+        onPress={() => {
+          dispatch(setSelectedGuest(guest));
+        }}
+        style={[styles.surpriseListItem, isSelected && styles.selectedListItem]}
+      >
+        <Text style={styles.surpriseListText} numberOfLines={1}>
+          {i + 1} | {checkName(guest)} | {statusDisplay}
+        </Text>
+        <CircleArrowRight
+          size={15}
+          color={isSelected ? colors.white : colors.lightGray}
+        />
+      </Pressable>
+    );
+  });
+
+  const validateGuestUpdateInputs = () => {
+    if (!name || !status) {
+      setErrorMessage("Remplir nom, statut");
+      return false;
+    }
+
+    if (password === passwordCheck && password !== "" && passwordCheck !== "") {
+      setErrorMessage("Les mots de passe sont identiques !");
+      return false;
+    }
+    return true;
+  };
+
+  const handleUpdateGuest = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      if (!validateGuestUpdateInputs()) {
+        return;
+      }
+
+      const guest = {
+        _id: selectedGuest._id,
+        name,
+        oldPassword: password,
+        newPassword: passwordCheck,
+        status,
+      };
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/update/${guest._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(guest),
+        },
+      );
+
+      const data = await response.json();
+
+      if (data.result) {
+        showMessage({
+          message: data.message,
+          type: "success",
+        });
+        resetGuestInputs();
+        getAllUsers();
+        dispatch(setSelectedGuest(null));
+      }
+    } catch (err) {
+      setErrorMessage(err.message);
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -400,12 +557,15 @@ export default function OptionsScreen() {
         <View style={styles.content}>
           <View style={styles.contentHeader}>{updateButtons}</View>
 
-          {typeOfUpdate === "guest" && (
+          {(typeOfUpdate === "guest" || typeOfUpdate === "updateGuest") && (
             <ScrollView
               contentContainerStyle={styles.guestFormContainer}
               showVerticalScrollIndicator={false}
             >
               {/*  sert à regrouper le formulaire */}
+              {typeOfUpdate === "updateGuest" && (
+                <View style={styles.surprisesList}>{guestsListDisplay}</View>
+              )}
               <View>
                 <Text style={styles.label}>Prénom</Text>
                 <TextInput
@@ -423,7 +583,11 @@ export default function OptionsScreen() {
                 />
               </View>
               <View>
-                <Text style={styles.label}>Mot de passe</Text>
+                {typeOfUpdate === "guest" ? (
+                  <Text style={styles.label}>Mot de passe</Text>
+                ) : (
+                  <Text style={styles.label}>Ancien mot de passe</Text>
+                )}
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={styles.passwordText}
@@ -448,7 +612,11 @@ export default function OptionsScreen() {
                     )}
                   </Pressable>
                 </View>
-                <Text style={styles.label}>Confirmation mot de passe</Text>
+                {typeOfUpdate === "guest" ? (
+                  <Text style={styles.label}>Confirmation mot de passe</Text>
+                ) : (
+                  <Text style={styles.label}>Nouveau mot de passe</Text>
+                )}
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={styles.passwordText}
@@ -458,8 +626,8 @@ export default function OptionsScreen() {
                     value={passwordCheck}
                     onChangeText={setPasswordCheck}
                     secureTextEntry={!isPasswordCheckVisible}
-                    returnKeyType="done"
-                    onSubmitEditing={handleSignup}
+                    returnKeyType="next"
+                    onSubmitEditing={() => statusRef.current?.focus()}
                     onFocus={() => setFocus("passwordCheck")}
                     onBlur={() => setFocus(null)}
                     autoCapitalize="none"
@@ -487,14 +655,21 @@ export default function OptionsScreen() {
               {errorMessage !== "" && (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               )}
-              <Pressable style={styles.buttonPrimary} onPress={handleSignup}>
+              <Pressable
+                style={styles.buttonPrimary}
+                onPress={
+                  typeOfUpdate === "guest" ? handleSignup : handleUpdateGuest
+                }
+              >
                 <Text style={styles.buttonPrimaryText}>
-                  Nouvel.le utilisateur.ice
+                  {typeOfUpdate === "guest"
+                    ? " Nouvel.le utilisateur.ice"
+                    : "Mettre à jour"}
                 </Text>
               </Pressable>
             </ScrollView>
           )}
-          {(typeOfUpdate === "+surprise" || "updateSurprise") && (
+          {(typeOfUpdate === "surprise" || "updateSurprise") && (
             <ScrollView
               style={{ flex: 1 }}
               contentContainerStyle={styles.masterScrollView}
@@ -660,7 +835,7 @@ export default function OptionsScreen() {
                   onChangeText={setNotes}
                   returnKeyType="go"
                   onSubmitEditing={() => {
-                    typeOfUpdate === "+surprise"
+                    typeOfUpdate === "surprise"
                       ? handleNewSurprise()
                       : handleUpdateSurprise();
                   }}
@@ -674,13 +849,13 @@ export default function OptionsScreen() {
               <Pressable
                 style={styles.buttonPrimary}
                 onPress={() => {
-                  typeOfUpdate === "+surprise"
+                  typeOfUpdate === "surprise"
                     ? handleNewSurprise()
                     : handleUpdateSurprise();
                 }}
               >
                 <Text style={styles.buttonPrimaryText}>
-                  {typeOfUpdate === "+surprise" ? "Créer" : "Mettre à jour"}
+                  {typeOfUpdate === "surprise" ? "Créer" : "Mettre à jour"}
                 </Text>
               </Pressable>
               {typeOfUpdate === "updateSurprise" && (
@@ -735,14 +910,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   guestFormContainer: {
-    flex: 1,
     paddingBottom: 100,
   },
   contentHeader: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginBottom: 32,
+    marginBottom: 20,
+    flexWrap: "wrap",
+    gap: 20,
   },
   contentHeaderBtn: {
     backgroundColor: colors.primary,

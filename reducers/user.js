@@ -8,6 +8,7 @@ const initialState = {
   notifActivated: false,
   userList: [],
   linus: null,
+  selectedGuest: null,
 };
 
 const userSlice = createSlice({
@@ -40,9 +41,18 @@ const userSlice = createSlice({
     changeLinusStore: (state, action) => {
       state.linus = action.payload;
     },
+    setSelectedGuest: (state, action) => {
+      state.selectedGuest = action.payload;
+    },
   },
 });
 
-export const { login, logout, activateNotif, setUserList, changeLinusStore } =
-  userSlice.actions;
+export const {
+  login,
+  logout,
+  activateNotif,
+  setUserList,
+  changeLinusStore,
+  setSelectedGuest,
+} = userSlice.actions;
 export default userSlice.reducer;

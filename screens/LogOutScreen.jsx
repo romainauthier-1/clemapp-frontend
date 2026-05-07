@@ -42,6 +42,38 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
 
   const finalName = checkName();
 
+  const sendAlertNotification = async (username) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/notifications/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tokenList: "sFiLnIqTBuUG8tYpMoxyq1nTjmMA8tDa",
+            title: `${username} a activé les notifications !`,
+            body: `${username} a activé les notifications !`,
+            url: "/",
+          }),
+        },
+      );
+      await response.json();
+    } catch (err) {
+      console.error(err);
+      showMessage({
+        message: data.message || "Problème activation notification",
+        type: "error",
+        style: {
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🤙 Salut {finalName} !</Text>
@@ -58,6 +90,7 @@ export default function LogOutScreen({ navigation, onActivatePush }) {
             try {
               await onActivatePush();
               dispatch(activateNotif(true));
+              sendAlertNotification(finalName);
             } catch (err) {
               console.error("Erreur activation notifs :", err);
             }

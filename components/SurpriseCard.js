@@ -35,7 +35,6 @@ export default function SurpriseCard({
   const [viewRiddle, setViewRiddle] = useState(false);
   const [viewHint, setViewHint] = useState(false);
   const [answerInput, setAnswerInput] = useState(null);
-  const [confirmation, setConfirmation] = useState(false);
   const user = useSelector((state) => state.user);
 
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -240,8 +239,10 @@ export default function SurpriseCard({
         </Text>
         <Text style={styles.description}>
           Organisé par :{" "}
-          {surprise.organizedBy.name[0].toUpperCase() +
-            surprise.organizedBy.name.slice(1)}
+          {surprise.organizedBy
+            ? surprise.organizedBy?.name[0].toUpperCase() +
+              surprise.organizedBy?.name.slice(1)
+            : "---"}
         </Text>
         <Text style={styles.description2}>
           {surprise.notes ? surprise.notes : "---"}
@@ -260,10 +261,14 @@ export default function SurpriseCard({
 
   return (
     <View key={surprise._id}>
-      {user.status === "guest" || user.status === "guest+" ? surprise.title === "Mais qui est cette personne ?" && user.status !== "guest+" && !surprise.isUnlocked ? (
-      lockedSurpriseCard()
-      ) : (
-        guestSurpriseCard()
+      {user.status === "guest" || user.status === "guest+" ? (
+        surprise.title === "Mais qui est cette personne ?" &&
+        user.status !== "guest+" &&
+        !surprise.isUnlocked ? (
+          lockedSurpriseCard()
+        ) : (
+          guestSurpriseCard()
+        )
       ) : (
         <>
           {surprise.isUnlocked

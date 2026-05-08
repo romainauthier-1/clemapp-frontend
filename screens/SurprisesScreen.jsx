@@ -47,7 +47,7 @@ export default function SurprisesScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const getSurprises = async () => {
-    !refreshing && setIsLoading(true);
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/surprises/all`,

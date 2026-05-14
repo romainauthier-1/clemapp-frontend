@@ -251,6 +251,7 @@ export default function OptionsScreen() {
 
   useEffect(() => {
     getSurprises();
+    setErrorMessage("");
   }, [typeOfUpdate]);
 
   useEffect(() => {
@@ -273,7 +274,7 @@ export default function OptionsScreen() {
 
   const deleteSurprise = async (surpriseId) => {
     const confirmed = window.confirm(
-      "Êtes-vous sûr de vouloir supprimer cette surprise ?",
+      "Tu es sûr.e de vouloir supprimer cette surprise ?",
     );
     if (confirmed) {
       try {
@@ -390,12 +391,24 @@ export default function OptionsScreen() {
     return (
       <Pressable
         key={i}
-        style={typeOfUpdate === update.slug ? styles.selectedHeaderBtn : styles.contentHeaderBtn}
+        style={
+          typeOfUpdate === update.slug
+            ? styles.selectedHeaderBtn
+            : styles.contentHeaderBtn
+        }
         onPress={() => {
           setTypeOfUpdate(update.slug);
         }}
       >
-        <Text style={typeOfUpdate === update.slug ? styles.selectedHeaderText : styles.contentHeaderText}>{update.display}</Text>
+        <Text
+          style={
+            typeOfUpdate === update.slug
+              ? styles.selectedHeaderText
+              : styles.contentHeaderText
+          }
+        >
+          {update.display}
+        </Text>
       </Pressable>
     );
   });
@@ -543,7 +556,7 @@ export default function OptionsScreen() {
 
   const handleDeleteGuest = async () => {
     const confirmed = window.confirm(
-      "Êtes-vous sûr de vouloir supprimer cet.te invité.e ?",
+      "Tu es sûr.e de vouloir supprimer cet.te invité.e ?",
     );
     if (confirmed) {
       try {
@@ -576,6 +589,7 @@ export default function OptionsScreen() {
       }
     }
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -633,8 +647,12 @@ export default function OptionsScreen() {
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!isPasswordVisible}
-                    returnKeyType="done"
-                    onSubmitEditing={() => passwordCheckRef.current?.focus()}
+                    returnKeyType="next"
+                    onSubmitEditing={() =>
+                      setTimeOut(() => {
+                        passwordCheckRef.current?.focus();
+                      }, 100)
+                    }
                     onFocus={() => setFocus("password")}
                     onBlur={() => setFocus(null)}
                     autoCapitalize="none"
@@ -754,7 +772,7 @@ export default function OptionsScreen() {
                   returnKeyType="next"
                   onFocus={() => setFocus("description")}
                   onBlur={() => setFocus(null)}
-                  autoCapitalize="none"
+                  autoCapitalize="sentences"
                   autoCorrect={true}
                 />
               </View>
@@ -877,7 +895,7 @@ export default function OptionsScreen() {
                   placeholderTextColor={colors.lightGray}
                   value={notes}
                   onChangeText={setNotes}
-                  returnKeyType="go"
+                  returnKeyType="done"
                   onSubmitEditing={() => {
                     typeOfUpdate === "surprise"
                       ? handleNewSurprise()
@@ -935,23 +953,32 @@ const styles = StyleSheet.create({
     maxHeight: screenHeight * 0.3,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 16,
+    fontSize: 36,
+    fontWeight: "700",
+    marginBottom: 12,
     color: colors.primary,
+    letterSpacing: 0.5,
   },
   subtitle: {
     color: colors.primary,
     textAlign: "center",
+    fontSize: 16,
+    fontWeight: "500",
+    letterSpacing: 0.3,
   },
   content: {
     backgroundColor: colors.primary,
-    borderTopLeftRadius: 48,
-    borderTopRightRadius: 48,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     width: "100%",
-    paddingHorizontal: 30,
-    paddingTop: 40,
+    paddingHorizontal: 24,
+    paddingTop: 28,
     flex: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
   },
   guestFormContainer: {
     paddingBottom: 100,
@@ -960,77 +987,118 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginBottom: 20,
+    marginBottom: 24,
     flexWrap: "wrap",
-    gap: 20,
+    gap: 12,
   },
   contentHeaderBtn: {
     backgroundColor: colors.primary,
-    borderWidth: 1,
-    borderColor: colors.white,
-    borderRadius: 25,
-    padding: 10,
+    borderWidth: 2,
+    borderColor: colors.secondaryLight,
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   selectedHeaderBtn: {
-    backgroundColor: colors.white,
-    borderRadius: 25,
-    padding: 10,
-    },
+    backgroundColor: colors.secondaryLight,
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 0,
+    shadowColor: colors.secondaryLight,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
+  },
   contentHeaderText: {
     color: colors.white,
-    fontWeight: "bold",
+    fontWeight: "600",
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
   selectedHeaderText: {
     color: colors.primary,
-    fontweight: "bold",
+    fontWeight: "700",
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
   label: {
-    color: colors.lightGray,
-    marginBottom: 8,
-    fontWeight: "bold",
+    color: colors.secondaryLight,
+    marginBottom: 10,
+    fontWeight: "600",
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
   input: {
     width: "100%",
     color: colors.white,
     backgroundColor: colors.primaryLight,
-    borderColor: colors.lightGray,
-    borderWidth: 1,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    opacity: 0.85,
+    borderColor: colors.secondaryLight,
+    borderWidth: 1.5,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    borderRadius: 12,
+    marginBottom: 12,
     fontSize: 16,
+    fontWeight: "500",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   dateInput: {
-    width: "91%",
+    width: "90%",
     color: colors.white,
     backgroundColor: colors.primaryLight,
-    borderColor: colors.lightGray,
-    borderWidth: 1,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    opacity: 0.85,
+    borderColor: colors.secondaryLight,
+    borderWidth: 1.5,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    borderRadius: 12,
+    marginBottom: 12,
     fontSize: 16,
+    fontWeight: "500",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   errorText: {
     color: colors.destructive,
-    marginTop: 8,
+    marginTop: 10,
+    fontSize: 14,
+    fontWeight: "600",
+    letterSpacing: 0.2,
   },
   buttonPrimary: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.secondaryLight,
     padding: 16,
-    borderRadius: 10,
+    borderRadius: 12,
     marginTop: 16,
+    shadowColor: colors.secondaryLight,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonPrimaryText: {
-    color: colors.white,
-    fontWeight: "bold",
+    color: colors.primary,
+    fontWeight: "700",
     textAlign: "center",
+    fontSize: 16,
+    letterSpacing: 0.3,
   },
   passwordContainer: {
     flexDirection: "row",
@@ -1039,23 +1107,30 @@ const styles = StyleSheet.create({
     width: "100%",
     color: colors.white,
     backgroundColor: colors.primaryLight,
-    borderColor: colors.lightGray,
-    borderWidth: 1,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    opacity: 0.85,
+    borderColor: colors.secondaryLight,
+    borderWidth: 1.5,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    borderRadius: 12,
+    marginBottom: 12,
     fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   passwordText: {
     color: colors.white,
     flex: 1,
+    fontWeight: "500",
   },
   surprisesList: {
     maxHeight: 150,
-    marginVertical: 10,
+    marginVertical: 12,
     overflow: "scroll",
   },
   surpriseListItem: {
@@ -1063,22 +1138,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: colors.primaryLight,
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: colors.lightGray,
+    opacity: 0.85,
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: colors.primaryLight,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   surpriseListText: {
     color: colors.white,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
     flex: 1,
   },
   selectedListItem: {
-    borderColor: colors.white,
+    borderColor: colors.secondaryLight,
     borderWidth: 2,
     backgroundColor: colors.secondary,
+    shadowColor: colors.secondaryLight,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
   },
   masterScrollView: {
     paddingBottom: 100,
@@ -1086,13 +1172,18 @@ const styles = StyleSheet.create({
   deleteBtn: {
     width: "100%",
     backgroundColor: colors.destructive,
-    borderColor: colors.white,
-    borderWidth: 1,
-    borderRadius: 15,
+    borderColor: "transparent",
+    borderWidth: 0,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
-    padding: 10,
-    opacity: 0.9,
+    padding: 14,
+    opacity: 0.95,
+    shadowColor: colors.destructive,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });

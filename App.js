@@ -62,15 +62,27 @@ const HomeTabs = ({ onActivatePush }) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          height: 60,
+          height: 70,
           position: "absolute",
           borderTopWidth: 0,
           elevation: 0,
-          marginHorizontal: 30,
-          borderRadius: 25,
+          marginHorizontal: 20,
+          borderRadius: 18,
           marginBottom: 10,
           backgroundColor: colors.secondary,
-          padding: 10,
+          paddingTop: 8,
+          paddingBottom: 10,
+          paddingHorizontal: 8,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          borderTopWidth: 1,
+          borderTopColor: colors.secondaryLight,
+        },
+        tabBarItemStyle: {
+          justifyContent: "center",
+          alignItems: "center",
         },
       }}
     >
@@ -80,16 +92,18 @@ const HomeTabs = ({ onActivatePush }) => {
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <PartyPopper
-              size={focused ? 30 : 20}
+              size={focused ? 28 : 22}
               color={focused ? colors.backgroundLight : colors.primaryLight}
+              strokeWidth={2}
             />
           ),
           tabBarActiveTintColor: colors.backgroundLight,
           tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "bold",
-            marginBottom: 5,
+            fontSize: 11,
+            fontWeight: "700",
+            marginBottom: 2,
+            letterSpacing: 0.2,
           },
         }}
       />
@@ -99,16 +113,18 @@ const HomeTabs = ({ onActivatePush }) => {
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <Gift
-              size={focused ? 30 : 20}
+              size={focused ? 28 : 22}
               color={focused ? colors.backgroundLight : colors.primaryLight}
+              strokeWidth={2}
             />
           ),
           tabBarActiveTintColor: colors.backgroundLight,
           tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "bold",
-            marginBottom: 5,
+            fontSize: 11,
+            fontWeight: "700",
+            marginBottom: 2,
+            letterSpacing: 0.2,
           },
         }}
       />
@@ -118,16 +134,18 @@ const HomeTabs = ({ onActivatePush }) => {
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <LoaderPinwheel
-              size={focused ? 30 : 20}
+              size={focused ? 28 : 22}
               color={focused ? colors.backgroundLight : colors.primaryLight}
+              strokeWidth={2}
             />
           ),
           tabBarActiveTintColor: colors.backgroundLight,
           tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "bold",
-            marginBottom: 5,
+            fontSize: 11,
+            fontWeight: "700",
+            marginBottom: 2,
+            letterSpacing: 0.2,
           },
         }}
       />
@@ -138,16 +156,18 @@ const HomeTabs = ({ onActivatePush }) => {
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <Crown
-                size={focused ? 30 : 20}
+                size={focused ? 28 : 22}
                 color={focused ? colors.backgroundLight : colors.primaryLight}
+                strokeWidth={2}
               />
             ),
             tabBarActiveTintColor: colors.backgroundLight,
             tabBarInactiveTintColor: colors.primaryLight,
             tabBarLabelStyle: {
-              fontSize: 12,
-              fontWeight: "bold",
-              marginBottom: 5,
+              fontSize: 11,
+              fontWeight: "700",
+              marginBottom: 2,
+              letterSpacing: 0.2,
             },
           }}
         />
@@ -159,16 +179,18 @@ const HomeTabs = ({ onActivatePush }) => {
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <Settings
-                size={focused ? 30 : 20}
+                size={focused ? 28 : 22}
                 color={focused ? colors.backgroundLight : colors.primaryLight}
+                strokeWidth={2}
               />
             ),
             tabBarActiveTintColor: colors.backgroundLight,
             tabBarInactiveTintColor: colors.primaryLight,
             tabBarLabelStyle: {
-              fontSize: 12,
-              fontWeight: "bold",
-              marginBottom: 5,
+              fontSize: 11,
+              fontWeight: "700",
+              marginBottom: 2,
+              letterSpacing: 0.2,
             },
           }}
         />
@@ -178,16 +200,18 @@ const HomeTabs = ({ onActivatePush }) => {
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <SquareArrowRightExit
-              size={focused ? 30 : 20}
+              size={focused ? 28 : 22}
               color={focused ? colors.backgroundLight : colors.primaryLight}
+              strokeWidth={2}
             />
           ),
           tabBarActiveTintColor: colors.backgroundLight,
           tabBarInactiveTintColor: colors.primaryLight,
           tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "bold",
-            marginBottom: 5,
+            fontSize: 11,
+            fontWeight: "700",
+            marginBottom: 2,
+            letterSpacing: 0.2,
           },
         }}
       >

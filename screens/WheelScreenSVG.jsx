@@ -170,6 +170,7 @@ export default function WheelScreen() {
       setIsLoading(false);
     }
   };
+
   const spinWheel = (linus = false) => {
     setWinner(null);
     setIsLinus(null);
@@ -219,12 +220,27 @@ export default function WheelScreen() {
     setCanAccessLinus(linusSurprise?.isUnlocked);
   }, [isFocused]);
 
+  const checkName = (user) => {
+    if (user.name.includes("-")) {
+      let composedName = user.name.split("-");
+      composedName =
+        composedName[0][0].toUpperCase() +
+        composedName[0].slice(1) +
+        " " +
+        composedName[1].toUpperCase();
+      return composedName;
+    } else {
+      let regularName = user.name[0].toUpperCase() + user.name.slice(1);
+      return regularName;
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* <View style={styles.pointer} /> */}
 
       <ArrowBigDown
-        style={{ position: "absolute", top: "9%", zIndex: 1 }}
+        style={{ position: "absolute", top: "10%", zIndex: 1 }}
         color={colors.secondary}
         size={30}
       />
@@ -262,15 +278,12 @@ export default function WheelScreen() {
         )}
       </View>
       {winner && (
-        <Text style={styles.winnerText}>
-          {" "}
-          Bravo {winner.name[0].toUpperCase() + winner.name.slice(1)} ! 🎉
-        </Text>
+        <Text style={styles.winnerText}> Bravo {checkName(winner)} ! 🎉</Text>
       )}
       {isLinus && (
         <Text style={styles.winnerText}>
           {" "}
-          {isLinus.name[0].toUpperCase() + isLinus.name.slice(1)} est Linus ! 🍹
+          {checkName(isLinus)} est Linus ! 🍹
         </Text>
       )}
     </View>
@@ -283,58 +296,84 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingBottom: 15,
+    paddingBottom: 20,
     backgroundColor: colors.backgroundLight,
   },
   wheelContainer: {
     height: 300,
     width: 300,
     borderRadius: 150,
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.primary,
+    opacity: 0.92,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 3,
+    borderColor: colors.secondaryLight,
   },
   button: {
-    marginTop: 10,
-    padding: 15,
-    backgroundColor: colors.secondary,
-    borderRadius: 50,
-    height: 200,
-    width: 150,
+    marginTop: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    backgroundColor: colors.primary,
+    opacity: 0.7,
+    borderRadius: 16,
+    height: 160,
+    width: 130,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+    borderBottomWidth: 3,
+    borderBottomColor: colors.secondaryLight,
   },
   buttonPressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.95 }],
+    opacity: 0.95,
+    transform: [{ scale: 0.96 }],
   },
   buttonText: {
     color: colors.white,
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "700",
     textAlign: "center",
-    marginBottom: 15,
+    marginBottom: 12,
+    letterSpacing: 0.3,
   },
   winnerText: {
-    fontSize: 35,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "700",
     color: colors.white,
     backgroundColor: colors.primary,
+    opacity: 0.95,
     textAlign: "center",
     position: "absolute",
     top: "40%",
     height: 100,
-    borderRadius: 10,
-    paddingHorizontal: 10,
+    borderRadius: 16,
+    paddingHorizontal: 16,
     paddingVertical: 20,
-    borderColor: colors.lightGray,
-    borderWidth: 1,
+    borderColor: colors.secondaryLight,
+    borderWidth: 3,
     zIndex: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 7,
   },
   btnContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
     width: "100%",
+    paddingHorizontal: 12,
+    gap: 12,
   },
 });

@@ -16,6 +16,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSurprises, unlockSurprise } from "../reducers/surprises";
+import { changeLinusStore } from "../reducers/user";
 import { colors } from "./colors";
 import { Sunrise, Sunset } from "lucide-react-native";
 

@@ -10,12 +10,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
 
 import {
-  PartyPopper,
-  Gift,
-  SquareArrowRightExit,
-  LoaderPinwheel,
-  Crown,
-  Settings,
+	PartyPopper,
+	Gift,
+	SquareArrowRightExit,
+	LoaderPinwheel,
+	Crown,
+	Settings,
 } from "lucide-react-native";
 import { colors } from "./screens/colors";
 
@@ -27,9 +27,9 @@ const reducers = combineReducers({ user, surprises });
 const persistConfig = { key: "ClemApp2", storage: AsyncStorage };
 
 const store = configureStore({
-  reducer: persistReducer(persistConfig, reducers),
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+	reducer: persistReducer(persistConfig, reducers),
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({ serializableCheck: false }),
 });
 
 const persistor = persistStore(store);
@@ -46,302 +46,304 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const HomeTabs = ({ onActivatePush }) => {
-  const user = useSelector((state) => state.user);
+	const user = useSelector((state) => state.user);
 
-  const surprises = useSelector((state) => state.surprises.surprises);
-  const filRouge = surprises?.find((s) => s._id === "69f1085e6f69559a159d7c87");
+	const surprises = useSelector((state) => state.surprises.surprises);
+	const filRouge = surprises?.find((s) => s._id === "69f1085e6f69559a159d7c87");
 
-  const canAccessFilRouge =
-    user.status === "guest+" ||
-    (user.status === "star" && filRouge?.isUnlocked === true);
+	const canAccessFilRouge =
+		user.status === "guest+" ||
+		user.status === "demo-admin" ||
+		(user.status === "star" && filRouge?.isUnlocked === true);
 
-  const canAccessSettings = user.status === "guest+";
+	const canAccessSettings =
+		user.status === "guest+" || user.status === "demo-admin";
 
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          height: 70,
-          position: "absolute",
-          borderTopWidth: 0,
-          elevation: 0,
-          marginHorizontal: 20,
-          borderRadius: 18,
-          marginBottom: 10,
-          backgroundColor: colors.secondary,
-          paddingTop: 8,
-          paddingBottom: 10,
-          paddingHorizontal: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          borderTopWidth: 1,
-          borderTopColor: colors.secondaryLight,
-        },
-        tabBarItemStyle: {
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Accueil"
-        component={WelcomeScreen}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <PartyPopper
-              size={focused ? 28 : 22}
-              color={focused ? colors.backgroundLight : colors.primaryLight}
-              strokeWidth={2}
-            />
-          ),
-          tabBarActiveTintColor: colors.backgroundLight,
-          tabBarInactiveTintColor: colors.primaryLight,
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: "700",
-            marginBottom: 2,
-            letterSpacing: 0.2,
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Surprises"
-        component={SurprisesScreen}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <Gift
-              size={focused ? 28 : 22}
-              color={focused ? colors.backgroundLight : colors.primaryLight}
-              strokeWidth={2}
-            />
-          ),
-          tabBarActiveTintColor: colors.backgroundLight,
-          tabBarInactiveTintColor: colors.primaryLight,
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: "700",
-            marginBottom: 2,
-            letterSpacing: 0.2,
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Roue"
-        component={WheelScreenSVG}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <LoaderPinwheel
-              size={focused ? 28 : 22}
-              color={focused ? colors.backgroundLight : colors.primaryLight}
-              strokeWidth={2}
-            />
-          ),
-          tabBarActiveTintColor: colors.backgroundLight,
-          tabBarInactiveTintColor: colors.primaryLight,
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: "700",
-            marginBottom: 2,
-            letterSpacing: 0.2,
-          },
-        }}
-      />
-      {canAccessFilRouge && (
-        <Tab.Screen
-          name="Fil Rouge"
-          component={EventScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Crown
-                size={focused ? 28 : 22}
-                color={focused ? colors.backgroundLight : colors.primaryLight}
-                strokeWidth={2}
-              />
-            ),
-            tabBarActiveTintColor: colors.backgroundLight,
-            tabBarInactiveTintColor: colors.primaryLight,
-            tabBarLabelStyle: {
-              fontSize: 11,
-              fontWeight: "700",
-              marginBottom: 2,
-              letterSpacing: 0.2,
-            },
-          }}
-        />
-      )}
-      {canAccessSettings && (
-        <Tab.Screen
-          name="Réglages"
-          component={OptionsScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Settings
-                size={focused ? 28 : 22}
-                color={focused ? colors.backgroundLight : colors.primaryLight}
-                strokeWidth={2}
-              />
-            ),
-            tabBarActiveTintColor: colors.backgroundLight,
-            tabBarInactiveTintColor: colors.primaryLight,
-            tabBarLabelStyle: {
-              fontSize: 11,
-              fontWeight: "700",
-              marginBottom: 2,
-              letterSpacing: 0.2,
-            },
-          }}
-        />
-      )}
-      <Tab.Screen
-        name="Déconnexion"
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <SquareArrowRightExit
-              size={focused ? 28 : 22}
-              color={focused ? colors.backgroundLight : colors.primaryLight}
-              strokeWidth={2}
-            />
-          ),
-          tabBarActiveTintColor: colors.backgroundLight,
-          tabBarInactiveTintColor: colors.primaryLight,
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: "700",
-            marginBottom: 2,
-            letterSpacing: 0.2,
-          },
-        }}
-      >
-        {(props) => <LogOutScreen {...props} onActivatePush={onActivatePush} />}
-      </Tab.Screen>
-    </Tab.Navigator>
-  );
+	return (
+		<Tab.Navigator
+			screenOptions={{
+				headerShown: false,
+				tabBarStyle: {
+					height: 70,
+					position: "absolute",
+					borderTopWidth: 0,
+					elevation: 0,
+					marginHorizontal: 20,
+					borderRadius: 18,
+					marginBottom: 10,
+					backgroundColor: colors.secondary,
+					paddingTop: 8,
+					paddingBottom: 10,
+					paddingHorizontal: 8,
+					shadowColor: "#000",
+					shadowOffset: { width: 0, height: 4 },
+					shadowOpacity: 0.3,
+					shadowRadius: 8,
+					borderTopWidth: 1,
+					borderTopColor: colors.secondaryLight,
+				},
+				tabBarItemStyle: {
+					justifyContent: "center",
+					alignItems: "center",
+				},
+			}}
+		>
+			<Tab.Screen
+				name="Accueil"
+				component={WelcomeScreen}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<PartyPopper
+							size={focused ? 28 : 22}
+							color={focused ? colors.backgroundLight : colors.primaryLight}
+							strokeWidth={2}
+						/>
+					),
+					tabBarActiveTintColor: colors.backgroundLight,
+					tabBarInactiveTintColor: colors.primaryLight,
+					tabBarLabelStyle: {
+						fontSize: 11,
+						fontWeight: "700",
+						marginBottom: 2,
+						letterSpacing: 0.2,
+					},
+				}}
+			/>
+			<Tab.Screen
+				name="Surprises"
+				component={SurprisesScreen}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<Gift
+							size={focused ? 28 : 22}
+							color={focused ? colors.backgroundLight : colors.primaryLight}
+							strokeWidth={2}
+						/>
+					),
+					tabBarActiveTintColor: colors.backgroundLight,
+					tabBarInactiveTintColor: colors.primaryLight,
+					tabBarLabelStyle: {
+						fontSize: 11,
+						fontWeight: "700",
+						marginBottom: 2,
+						letterSpacing: 0.2,
+					},
+				}}
+			/>
+			<Tab.Screen
+				name="Roue"
+				component={WheelScreenSVG}
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<LoaderPinwheel
+							size={focused ? 28 : 22}
+							color={focused ? colors.backgroundLight : colors.primaryLight}
+							strokeWidth={2}
+						/>
+					),
+					tabBarActiveTintColor: colors.backgroundLight,
+					tabBarInactiveTintColor: colors.primaryLight,
+					tabBarLabelStyle: {
+						fontSize: 11,
+						fontWeight: "700",
+						marginBottom: 2,
+						letterSpacing: 0.2,
+					},
+				}}
+			/>
+			{canAccessFilRouge && (
+				<Tab.Screen
+					name="Fil Rouge"
+					component={EventScreen}
+					options={{
+						tabBarIcon: ({ focused, color, size }) => (
+							<Crown
+								size={focused ? 28 : 22}
+								color={focused ? colors.backgroundLight : colors.primaryLight}
+								strokeWidth={2}
+							/>
+						),
+						tabBarActiveTintColor: colors.backgroundLight,
+						tabBarInactiveTintColor: colors.primaryLight,
+						tabBarLabelStyle: {
+							fontSize: 11,
+							fontWeight: "700",
+							marginBottom: 2,
+							letterSpacing: 0.2,
+						},
+					}}
+				/>
+			)}
+			{canAccessSettings && (
+				<Tab.Screen
+					name="Réglages"
+					component={OptionsScreen}
+					options={{
+						tabBarIcon: ({ focused, color, size }) => (
+							<Settings
+								size={focused ? 28 : 22}
+								color={focused ? colors.backgroundLight : colors.primaryLight}
+								strokeWidth={2}
+							/>
+						),
+						tabBarActiveTintColor: colors.backgroundLight,
+						tabBarInactiveTintColor: colors.primaryLight,
+						tabBarLabelStyle: {
+							fontSize: 11,
+							fontWeight: "700",
+							marginBottom: 2,
+							letterSpacing: 0.2,
+						},
+					}}
+				/>
+			)}
+			<Tab.Screen
+				name="Déconnexion"
+				options={{
+					tabBarIcon: ({ focused, color, size }) => (
+						<SquareArrowRightExit
+							size={focused ? 28 : 22}
+							color={focused ? colors.backgroundLight : colors.primaryLight}
+							strokeWidth={2}
+						/>
+					),
+					tabBarActiveTintColor: colors.backgroundLight,
+					tabBarInactiveTintColor: colors.primaryLight,
+					tabBarLabelStyle: {
+						fontSize: 11,
+						fontWeight: "700",
+						marginBottom: 2,
+						letterSpacing: 0.2,
+					},
+				}}
+			>
+				{(props) => <LogOutScreen {...props} onActivatePush={onActivatePush} />}
+			</Tab.Screen>
+		</Tab.Navigator>
+	);
 };
 
 const urlBase64ToUint8Array = (base64String) => {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, "+")
-    .replace(/_/g, "/");
+	const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding)
+		.replace(/\-/g, "+")
+		.replace(/_/g, "/");
 
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
 
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
 };
 
 const AppNavigation = () => {
-  const isConnected = useSelector((state) => state.user.isConnected);
-  const userToken = useSelector((state) => state.user.token);
+	const isConnected = useSelector((state) => state.user.isConnected);
+	const userToken = useSelector((state) => state.user.token);
 
-  const registerServiceWorker = async () => {
-    console.log("SW présent dans navigator ?", "serviceWorker" in navigator);
-    console.log("PushManager présent dans window ?", "PushManager" in window);
-    if ("serviceWorker" in navigator && "PushManager" in window) {
-      try {
-        const registration =
-          await navigator.serviceWorker.register("/serviceWorker.js");
-        console.log("Service Worker enregistré !", registration);
-        return registration;
-      } catch (error) {
-        console.error("Erreur SW:", error);
-      }
-    }
-  };
+	const registerServiceWorker = async () => {
+		console.log("SW présent dans navigator ?", "serviceWorker" in navigator);
+		console.log("PushManager présent dans window ?", "PushManager" in window);
+		if ("serviceWorker" in navigator && "PushManager" in window) {
+			try {
+				const registration =
+					await navigator.serviceWorker.register("/serviceWorker.js");
+				console.log("Service Worker enregistré !", registration);
+				return registration;
+			} catch (error) {
+				console.error("Erreur SW:", error);
+			}
+		}
+	};
 
-  const subscribeUser = async () => {
-    console.log("1. Entrée dans subscribeUser");
-    console.log("2. Token récupéré :", userToken);
+	const subscribeUser = async () => {
+		console.log("1. Entrée dans subscribeUser");
+		console.log("2. Token récupéré :", userToken);
 
-    const registration = await navigator.serviceWorker.ready;
+		const registration = await navigator.serviceWorker.ready;
 
-    // const existingSubscription =
-    //   await registration.pushManager.getSubscription();
-    // // if (existingSubscription) {
-    // //   console.log("Déjà abonné :", existingSubscription);
-    // //   // return;
-    // // }
-    // console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY,
-      ),
-    });
+		// const existingSubscription =
+		//   await registration.pushManager.getSubscription();
+		// // if (existingSubscription) {
+		// //   console.log("Déjà abonné :", existingSubscription);
+		// //   // return;
+		// // }
+		// console.log("VAPID PUBLIC KEY: ", process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY);
+		const subscription = await registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: urlBase64ToUint8Array(
+				process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY,
+			),
+		});
 
-    console.log("3. Subscription obtenue, envoi au backend...");
+		console.log("3. Subscription obtenue, envoi au backend...");
 
-    const subscriptionJSON = subscription.toJSON();
+		const subscriptionJSON = subscription.toJSON();
 
-    const response = await fetch(
-      `${process.env.EXPO_PUBLIC_BACKEND_URL}/users/subscribe`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: userToken,
-          subscription: subscriptionJSON,
-        }),
-      },
-    );
-    const data = await response.json();
-    console.log("4. Réponse Backend :", data);
-  };
+		const response = await fetch(
+			`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/subscribe`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					token: userToken,
+					subscription: subscriptionJSON,
+				}),
+			},
+		);
+		const data = await response.json();
+		console.log("4. Réponse Backend :", data);
+	};
 
-  const setupPush = async () => {
-    const registration = await registerServiceWorker();
-    try {
-      if (registration) {
-        console.log(
-          "On peut maintenant demander la souscription !",
-          registration,
-        );
-        await subscribeUser();
-      }
-    } catch (err) {
-      console.error("Problème lors de l'activation des notifications : ", err);
-    }
-  };
+	const setupPush = async () => {
+		const registration = await registerServiceWorker();
+		try {
+			if (registration) {
+				console.log(
+					"On peut maintenant demander la souscription !",
+					registration,
+				);
+				await subscribeUser();
+			}
+		} catch (err) {
+			console.error("Problème lors de l'activation des notifications : ", err);
+		}
+	};
 
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {isConnected ? (
-        <Stack.Screen name="ClemApp | Bienvenue">
-          {(props) => <HomeTabs {...props} onActivatePush={setupPush} />}
-        </Stack.Screen>
-      ) : (
-        <Stack.Screen name="ClemApp | Connexion" component={LoginScreen} />
-      )}
-    </Stack.Navigator>
-  );
+	return (
+		<Stack.Navigator screenOptions={{ headerShown: false }}>
+			{isConnected ? (
+				<Stack.Screen name="ClemApp | Bienvenue">
+					{(props) => <HomeTabs {...props} onActivatePush={setupPush} />}
+				</Stack.Screen>
+			) : (
+				<Stack.Screen name="ClemApp | Connexion" component={LoginScreen} />
+			)}
+		</Stack.Navigator>
+	);
 };
 
 const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: colors.backgroundLight,
-  },
+	...DefaultTheme,
+	colors: {
+		...DefaultTheme.colors,
+		background: colors.backgroundLight,
+	},
 };
 
 export default function App({ navigation }) {
-  return (
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <PersistGate persistor={persistor}>
-          <NavigationContainer theme={MyTheme}>
-            <AppNavigation />
-          </NavigationContainer>
-        </PersistGate>
-        <StatusBar style="light" />
-        <FlashMessage position="top" />
-      </SafeAreaProvider>
-    </Provider>
-  );
+	return (
+		<Provider store={store}>
+			<SafeAreaProvider>
+				<PersistGate persistor={persistor}>
+					<NavigationContainer theme={MyTheme}>
+						<AppNavigation />
+					</NavigationContainer>
+				</PersistGate>
+				<StatusBar style="light" />
+				<FlashMessage position="top" />
+			</SafeAreaProvider>
+		</Provider>
+	);
 }

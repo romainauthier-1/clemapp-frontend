@@ -20,7 +20,7 @@
 
 - **Se connecter** de manière sécurisée
 - **Découvrir des surprises** organisées par catégories
-- **Utiliser une roue de la fortune** pour sélectionner aléatoirement une surprise
+- **Utiliser une roue de la fortune** pour sélectionner aléatoirement un.e invité.e
 - **Recevoir des notifications push** en temps réel
 - **Accéder à des fonctionnalités exclusives** selon le statut de l'utilisateur
 - **Gérer son profil** et ses préférences
